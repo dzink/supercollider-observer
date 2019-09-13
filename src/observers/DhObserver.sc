@@ -30,7 +30,7 @@ DhObserver {
 		// ^ nil;
 	}
 
-	subscribeTo {
+	observe {
 		arg notifier;
 		notifier.addObserver(this);
 		^ this;
