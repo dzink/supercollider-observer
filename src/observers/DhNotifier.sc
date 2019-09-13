@@ -4,7 +4,7 @@
  */
 DhNotifier {
 	var id = 0;
-	var observers = nil;
+	var <observers = nil;
 
 	notify {
 		arg message;
@@ -18,7 +18,7 @@ DhNotifier {
 	addObserver {
 		arg observer;
 		if (observers.isKindOf(List).not) {
-			observers = List[];
+			observers = SortedList[];
 		};
 		observers.add(observer);
 		^ this;

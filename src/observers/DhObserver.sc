@@ -4,6 +4,7 @@ DhObserver {
 
 	var <>function = nil;
 	var filter = nil;
+	var <>weight = 0;
 
 	*new {
 		arg function = {}, filter = nil;
@@ -35,4 +36,13 @@ DhObserver {
 		notifier.addObserver(this);
 		^ this;
 	}
+
+	< {
+		arg comp;
+		if (comp.isKindOf(DhObserver)) {
+			comp = comp.weight;
+		};
+		^ this.weight < comp;
+	}
+
 }

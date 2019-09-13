@@ -3,7 +3,7 @@
  * observers. Any time any notifier sends a message to this observer, it passes
  * the message along to all its observers.
  */
-DhDuplexObserver : DhNotifier {
+DhNotifierObserver : DhNotifier {
 	var <notifier = nil;
 	var <observer = nil;
 
