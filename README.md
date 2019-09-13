@@ -1,6 +1,6 @@
 NotificationSystem
   Notifier - receives subscriptions from observeer, emits notifications.
-  Observer - subscribes to notifier, observes based on notifications.
+  Observer - observes a notifier, performs actions based on notifications.
 	Notification - contains a messageId, and a payload.
 	NotificationService - wraps these up.
   Objects have notifiers

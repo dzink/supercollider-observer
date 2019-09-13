@@ -3,7 +3,7 @@
 DhObserver {
 
 	var <>function = nil;
-	var filter = nil;
+	var <>filter = nil;
 	var <>weight = 0;
 
 	*new {
@@ -22,13 +22,13 @@ DhObserver {
 	 * Receives a notification and runs the function.
 	 */
 	respond {
-		arg notification;
+		arg message;
 		var result;
-		// if (filter.isNil or: filter.matches(notification)) {
-			result = function.value(notification);
+		if (filter.isNil or: {filter.matches(message.context)}) {
+			result = function.value(message);
 			^ result;
-		// };
-		// ^ nil;
+		};
+		^ nil;
 	}
 
 	observe {
