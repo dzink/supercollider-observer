@@ -3,6 +3,7 @@ DhModule : DhAtom {
 	var <notifiers;
 	var <observers;
 	var serviceManager;
+	var tree;
 
 	*new {
 		arg id;

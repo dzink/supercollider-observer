@@ -14,6 +14,17 @@ DhAtom : IdentityDictionary {
 		};
 	}
 
+	sortByProperty {
+		arg key = \weight;
+		var values = this.values.sortMap {
+			if (this.isKindOf(Dictionary)) {
+				this[\weight] ?! 0;
+			} {
+				0;
+			};
+		};
+		^ values;
+	}
 	// method {
 	// 	arg method ... args;
 	// 	var result;
