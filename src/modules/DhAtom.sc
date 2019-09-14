@@ -13,4 +13,13 @@ DhAtom : IdentityDictionary {
 			^ value;
 		};
 	}
+
+	// method {
+	// 	arg method ... args;
+	// 	var result;
+	// 	if (this.respondsTo(method)) {
+	// 		result = this.perform(method, **args);
+	// 	};
+	// 	^ result;
+	// }
 }

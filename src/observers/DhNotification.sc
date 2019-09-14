@@ -1,4 +1,4 @@
-DhNotification {
+DhNotification : DhActivatable{
 	var <message = nil;
 	var <context = nil;
 

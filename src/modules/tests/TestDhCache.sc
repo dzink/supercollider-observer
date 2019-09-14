@@ -36,7 +36,7 @@ TestDhCache : TestDh {
 		var key = \cat;
 		cache.put(key, nil);
 		c = cache.cacheAside(key, {\woof});
-		this.assert(cache.hasKey(key), "Valid keys are set on nil.");
+		this.assert(cache.includesKey(key), "Valid keys are set on nil.");
 		this.assertEquals(c, nil, "Nil values are cached.");
 	}
 

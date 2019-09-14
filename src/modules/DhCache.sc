@@ -13,7 +13,7 @@ DhCache : DhAtom {
 
 	cacheAside {
 		arg key, default;
-		if (this.hasKey(key).not) {
+		if (this.includesKey(key).not) {
 			var v = default.value();
 			this.put(key, v);
 			^ v;
@@ -43,7 +43,7 @@ DhCache : DhAtom {
 		^ nil;
 	}
 
-	hasKey {
+	includesKey {
 		arg key;
 		^ validKeys[key] ?? false;
 	}

@@ -71,7 +71,7 @@ DhContext : IdentityDictionary {
 	/**
 	 * Import in any unfilled keys in this based on aContext.
 	 */
-	merge {
+	importDefaults {
 		arg aContext, keys;
 		if (aContext.isKindOf(DhContext)) {
 		keys = keys ?? aContext.keys;
