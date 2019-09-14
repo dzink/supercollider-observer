@@ -1,4 +1,4 @@
-DhModule : DhHeirarchicalAtom {
+DhModule : DhAtom {
 	var <id;
 	var <notifiers;
 	var <observers;

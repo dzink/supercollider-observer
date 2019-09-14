@@ -16,6 +16,9 @@ DhTree {
 		^ this;
 	}
 
+	/**
+	 * Add a group of branches to this.
+	 */
 	branch {
 		arg ... branch;
 		if (branch.isKindOf(Array).not) {
@@ -23,7 +26,7 @@ DhTree {
 		};
 		branch.do {
 			arg b;
-			this.addBranch(b);
+			this.prAddBranch(b);
 			b.setTrunk(this);
 		}
 		^ this;
@@ -44,7 +47,7 @@ DhTree {
 		};
 	}
 
-	addBranch {
+	prAddBranch {
 		arg branch;
 		if (branches.isNil) {
 			branches = List[];
@@ -53,7 +56,7 @@ DhTree {
 		^ this;
 	}
 
-	selfRespondsTo {
+	prSelfRespondsTo {
 		arg method;
 		^ self.respondsTo(method.asSymbol());
 	}
@@ -61,10 +64,10 @@ DhTree {
 	/**
 	 * Performs a method on its self object.
 	 */
-	selfPerformOn {
+	prSelfPerform {
 		arg method ... args;
 		var result = nil;
-		if (this.selfRespondsTo(method)) {
+		if (this.prSelfRespondsTo(method)) {
 			result = self.perform(method, *(args));
 		};
 		^ result;
@@ -73,15 +76,15 @@ DhTree {
 	/**
 	 * Goes down the trunk until it finds a trunk that can perform the action.
 	 */
-	trunkPerformOn {
+	prTrunkPerform {
 		arg method ... args;
 		if (trunk.isNil) {
 			^ nil;
 		};
-		if (trunk.selfRespondsTo(method)) {
-			^ trunk.selfPerformOn(method, *(args));
+		if (trunk.prSelfRespondsTo(method)) {
+			^ trunk.prSelfPerform(method, *(args));
 		} {
-			^ trunk.trunkPerformOn(method, *(args));
+			^ trunk.prTrunkPerform(method, *(args));
 		};
 	}
 
@@ -93,9 +96,9 @@ DhTree {
 		if (trunk.isNil) {
 			^ nil;
 		};
-		if (trunk.selfRespondsTo(\at)) {
+		if (trunk.prSelfRespondsTo(\at)) {
 			var v;
-			v = trunk.selfPerformOn(\at, key);
+			v = trunk.prSelfPerform(\at, key);
 			if (v.isNil.not) {
 				^ v;
 			} {
@@ -104,5 +107,22 @@ DhTree {
 		} {
 			^ trunk.trunkProperty(key);
 		};
+	}
+
+	/**
+	 * Try to turn this into a tree if possible.
+	 */
+	*asTree {
+		arg tree;
+		if (tree.isKindOf(DhTree)) {
+			^ tree;
+		};
+		if (tree.respondsTo(\at) and: {tree[\tree].isNil.not}) {
+			^ tree[\tree];
+		};
+		if (tree.respondsTo(\tree)) {
+			^ tree.tree();
+		};
+		^ nil;
 	}
 }

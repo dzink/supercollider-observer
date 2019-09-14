@@ -38,11 +38,11 @@ TestDhTree : TestDh {
 		// Create any old object that has unique methods.
 		var o = List();
 		p = DhTree(o);
-		this.assert(p.selfRespondsTo(\do), "Self can search for methods.");
-		this.assertEquals(p.selfPerformOn(\class), List, "Self can perform methods.");
-		p.selfPerformOn(\addAll, [1, 2]);
-		this.assert(p.selfPerformOn(\includes, 1), "Self can perform methods with one arg.");
-		p.selfPerformOn(\put, 1, 3);
+		this.assert(p.prSelfRespondsTo(\do), "Self can search for methods.");
+		this.assertEquals(p.prSelfPerform(\class), List, "Self can perform methods.");
+		p.prSelfPerform(\addAll, [1, 2]);
+		this.assert(p.prSelfPerform(\includes, 1), "Self can perform methods with one arg.");
+		p.prSelfPerform(\put, 1, 3);
 		this.assertEquals(p.self[1], 3, "Self can perform methods with many args.");
 	}
 
@@ -50,8 +50,8 @@ TestDhTree : TestDh {
 		// Create any old object that has unique methods.
 		var o = List();
 		p.self = o;
-		c1.trunkPerformOn(\addAll, [1, 2]);
-		this.assert(p.selfPerformOn(\includes, 1), "Trunk methods bubble up to branches, performed on trunk.");
+		c1.prTrunkPerform(\addAll, [1, 2]);
+		this.assert(p.prSelfPerform(\includes, 1), "Trunk methods bubble up to branches, performed on trunk.");
 	}
 
 	test_trunkProperty {
