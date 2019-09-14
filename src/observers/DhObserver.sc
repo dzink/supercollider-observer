@@ -24,7 +24,7 @@ DhObserver {
 	respond {
 		arg message;
 		var result;
-		if (filter.isNil or: {filter.matches(message.context)}) {
+		if (filter.isNil or: {filter.match(message.context)}) {
 			result = function.value(message);
 			^ result;
 		};

@@ -80,4 +80,56 @@ TestDhObservers : TestDh {
 		n2.notify();
 		this.assert(animals.includesAll(List[\lion, \tiger]), "Duplex responds to n2");
 	}
+
+	test_notification {
+		var m = DhNotification("meow");
+		var result;
+		o.observe(n);
+		o.function = {
+			arg message;
+			result = message.message;
+		};
+		n.notify(m);
+		this.assertEquals(result, "meow", "Observer passes message.");
+	}
+
+
+	test_notificationFilter {
+		var nf = DhContext[
+			\cat -> \meow,
+		];
+		var of = DhContext[
+			\cat -> \meow,
+		];
+		var m = DhNotification("meow", nf);
+		var result = nil;
+		o.observe(n);
+		o.function = {
+			arg message;
+			result = message.message;
+		};
+		o.filter = of;
+		n.notify(m);
+		this.assertEquals(result, "meow", "Observer passes message thru filter.");
+	}
+
+	test_notificationFilterFail {
+		var nf = DhContext[
+			\cat -> \meow,
+		];
+		var of = DhContext[
+			\cat -> \woof,
+		];
+		var m = DhNotification("meow", nf);
+		var result = nil;
+		o.observe(n);
+		o.function = {
+			arg message;
+			result = message.message;
+		};
+		o.filter = of;
+		n.notify(m);
+		this.assertEquals(result, nil, "Observer filters unmatching message.");
+	}
+
 }

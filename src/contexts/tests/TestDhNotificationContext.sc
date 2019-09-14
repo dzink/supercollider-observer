@@ -1,9 +1,9 @@
-TestDhNotificationContext : TestDh {
+TestDhContext : TestDh {
 	var a, b;
 
 	setUp {
-		a = DhNotificationContext();
-		b = DhNotificationContext();
+		a = DhContext();
+		b = DhContext();
 	}
 
 	tearDown {
@@ -22,7 +22,7 @@ TestDhNotificationContext : TestDh {
 	}
 
 	test_matchAll {
-		b = DhNotificationContextAll();
+		b = DhContextAll();
 		a[\cat] = \meow;
 		a[\dog] = \woof;
 		b[\cat] = \meow;
@@ -34,11 +34,27 @@ TestDhNotificationContext : TestDh {
 
 		b[\cat] = \meow;
 		a[\cat] = nil;
-		this.assert(b.match(a).not, "Matching all fails if target is missing.");
+		this.assert(b.match(a).not, "Matching all passes if target is missing.");
+	}
+
+	test_matchFull {
+		b = DhContextFull();
+		a[\cat] = \meow;
+		a[\dog] = \woof;
+		b[\cat] = \meow;
+		b[\dog] = \woof;
+		this.assert(b.match(a), "Matching full passes positive.");
+
+		b[\cat] = \woof;
+		this.assert(b.match(a).not, "Matching full fails negative.");
+
+		b[\cat] = \meow;
+		a[\cat] = nil;
+		this.assert(b.match(a).not, "Matching full fails if target is missing.");
 	}
 
 	test_matchNone {
-		b = DhNotificationContextNone();
+		b = DhContextNone();
 		a[\cat] = \meow;
 		a[\dog] = \woof;
 		b[\cat] = \woof;
