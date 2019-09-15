@@ -76,7 +76,7 @@ DhTree {
 	/**
 	 * Goes down the trunk until it finds a trunk that can perform the action.
 	 */
-	prTrunkPerform {
+	trunkPerform {
 		arg method ... args;
 		if (trunk.isNil) {
 			^ nil;
@@ -84,7 +84,7 @@ DhTree {
 		if (trunk.prSelfRespondsTo(method)) {
 			^ trunk.prSelfPerform(method, *(args));
 		} {
-			^ trunk.prTrunkPerform(method, *(args));
+			^ trunk.trunkPerform(method, *(args));
 		};
 	}
 
@@ -106,6 +106,31 @@ DhTree {
 			};
 		} {
 			^ trunk.trunkProperty(key);
+		};
+	}
+
+	trunkFilter {
+		arg func = {};
+		var t = this.prTrunkFilter(func);
+		if (t.isKindOf(DhTree)) {
+			^ t.self;
+		};
+		^ nil;
+	}
+
+	/**
+	 * Finds the first trunk that matches the given filter.
+	 */
+	prTrunkFilter {
+		arg func = {};
+		if (trunk.isNil) {
+			^ nil;
+		} {
+			if (func.(trunk.self)) {
+				^ trunk;
+			} {
+				^ trunk.prTrunkFilter(func);
+			};
 		};
 	}
 

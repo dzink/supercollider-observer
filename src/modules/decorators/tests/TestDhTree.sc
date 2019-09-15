@@ -50,7 +50,7 @@ TestDhTree : TestDh {
 		// Create any old object that has unique methods.
 		var o = List();
 		p.self = o;
-		c1.prTrunkPerform(\addAll, [1, 2]);
+		c1.trunkPerform(\addAll, [1, 2]);
 		this.assert(p.prSelfPerform(\includes, 1), "Trunk methods bubble up to branches, performed on trunk.");
 	}
 
@@ -68,5 +68,25 @@ TestDhTree : TestDh {
 		this.assertEquals(c, \meow, "Root properties bubble up 2 levels.");
 		c = c1.trunkProperty(\hamster);
 		this.assert(c.isNil(), "Empty root properties do not bubble up.");
+	}
+
+	test_trunkFilter {
+		var c;
+		p.self = DhAtom[
+			\cat -> \meow,
+		];
+		t.self = DhAtom[
+			\dog -> \woof,
+		];
+		c = c1.prTrunkFilter({
+			arg o;
+			o.dog == \woof;
+		});
+		this.assertEquals(c, t, "Trunk filter finds immediate parent.");
+		c = c1.prTrunkFilter({
+			arg o;
+			o.cat == \meow;
+		});
+		this.assertEquals(c, p, "Trunk filter finds root.");
 	}
 }
