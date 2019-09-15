@@ -1,4 +1,4 @@
-TestDhAtom : UnitTest {
+TestDhAtom : TestDh {
 	var a;
 
 	setUp {
@@ -14,7 +14,7 @@ TestDhAtom : UnitTest {
 		this.assertEquals(a.cat, \meow, "Property-style assignment.");
 		this.assertEquals(a[\cat], \meow, "Key-style assignment.");
 		a["dog"] = \woof;
-		this.assertEquals(a.dog, \woof, "String keys are converted to symbols.");
+		this.assertEquals(a[\dog], \woof, "String keys are converted to symbols.");
 	}
 
 	test_sort {
