@@ -1,10 +1,10 @@
-
-
 DhObserver {
 
 	var <>function = nil;
 	var <>filter = nil;
 	var <>weight = 0;
+	var <>async = false;
+	var <blocked = false;
 
 	*new {
 		arg function = {}, filter = nil;

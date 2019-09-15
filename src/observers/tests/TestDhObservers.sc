@@ -22,13 +22,13 @@ TestDhObservers : TestDh {
 			animal = \dog;
 		};
 		o.observe(n);
-		n.notify;
+		n.notify();
 		this.assertEquals(animal, \dog, "Observer responds to empty nofification");
 	}
 
 	test_emptyObserverFunction {
 		o.observe(n);
-		n.notify;
+		n.notify();
 		this.assert(true, "Empty observer function does not crash");
 	}
 
@@ -130,6 +130,41 @@ TestDhObservers : TestDh {
 		o.filter = of;
 		n.notify(m);
 		this.assertEquals(result, nil, "Observer filters unmatching message.");
+	}
+
+	test_notifyResolve {
+		var animal = \cat;
+		o.function = {
+			0.5.wait;
+			animal = \dog;
+		};
+		o.observe(n);
+		n.notifyResolve();
+		this.assertEquals(animal, \dog, "Observer waits for sync nofification");
+	}
+
+	test_notifyAsync {
+		var animal = \cat;
+		o.function = {
+			0.5.wait;
+			animal = \dog;
+		};
+		o.observe(n);
+		n.notifyAsync();
+		this.assertEquals(animal, \cat, "Async Observer has not finished yet");
+		this.wait({animal == \dog}, "Async Observer is now complete", 3);
+	}
+
+	test_notifyAsyncObserver {
+		var animal = \cat;
+		o.function = {
+			animal = \dog;
+		};
+		o.observe(n);
+		o.async = true;
+		n.notify();
+		this.assertEquals(animal, \cat, "We shouldn't wait for an async observer");
+		this.wait({animal == \dog}, "Async Observer is now complete", 3);
 	}
 
 }
