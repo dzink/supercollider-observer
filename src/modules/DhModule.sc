@@ -4,6 +4,8 @@ DhModule : DhAtom {
 	var <observers;
 	var serviceManager;
 	var tree;
+	var functions;
+	var <services;
 
 	*new {
 		arg id;
@@ -16,13 +18,15 @@ DhModule : DhAtom {
 		arg i;
 		id = i;
 		tree = DhTree(this);
+		functions = DhAtom();
 		notifiers = DhAtom();
 		observers = DhAtom();
 		^ this;
 	}
 
-	serviceManager {
-		// If no trunk, or the trunk didn't have a serviceManager.
+	service {
+		arg key;
+		
 		if (serviceManager.isNil) {
 			serviceManager = DhAtom();
 		}
