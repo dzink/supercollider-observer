@@ -7,7 +7,7 @@ DhDependencyInjectionContainer[] {
 	}
 
 	init {
-		objects = DhAtom[];
+		objects = DhNillable[];
 		^ this;
 	}
 

@@ -4,7 +4,7 @@ DhConfig : DhDependencyInjectionContainer {
 		arg yaml;
 		var yamlConfig = yaml.parseYAML();
 		^ DhConfig.from(yamlConfig, IdentityDictionary[
-			\convertFloat -> true,
+			\convertTypes -> true,
 		]);
 	}
 
@@ -12,7 +12,7 @@ DhConfig : DhDependencyInjectionContainer {
 		arg yamlFile;
 		var yamlConfig = yamlFile.parseYAMLFile();
 		^ DhConfig.from(yamlConfig, IdentityDictionary[
-			\convertFloat -> true,
+			\convertTypes -> true,
 		]);
 	}
 
@@ -27,7 +27,7 @@ DhConfig : DhDependencyInjectionContainer {
 		arg baseKey = "", object = [], options = IdentityDictionary[];
 		object.keysValuesDo {
 			arg key, value;
-			var convertFloat = options[\convertFloat] ?? false;
+			var convertTypes = options[\convertTypes] ?? false;
 
 			// Convert arrays to dictionary with indices as keys.
 			if (value.isKindOf(Array)) {
@@ -36,13 +36,33 @@ DhConfig : DhDependencyInjectionContainer {
 			if (value.isKindOf(Dictionary)) {
 				this.prParseObject(baseKey ++ key ++ ".", value, options);
 			} {
-				if (convertFloat and: {"^-*[\\d\\.]$".matchRegexp(value)}) {
-					value = value.asFloat;
+				if (convertTypes) {
+					value = this.convertTypes(value);
 				};
 				this.put(baseKey ++ key, value);
 			};
 		};
 		^ this;
+	}
+
+	convertTypes {
+		arg value;
+		if ("^-*[\\d\\.]$".matchRegexp(value)) {
+			^ value.asFloat;
+		};
+		if ("true".compare(value, true) == 0) {
+			^ true;
+		};
+		if ("false".compare(value, true) == 0) {
+			^ false;
+		};
+		if ("nil".compare(value, true) == 0) {
+			^ nil;
+		};
+		if ("null".compare(value, true) == 0) {
+			^ nil;
+		};
+		^ value;
 	}
 
 	subConfig {
@@ -92,7 +112,7 @@ DhConfig : DhDependencyInjectionContainer {
 		arg default;
 		default.keys.do {
 			arg key;
-			if (this.at(key).isNil) {
+			if (this.includesKey(key)) {
 				var value = default.at(key);
 				if (value.isKindOf(DhConfig).not) {
 					this.put(key, default.at(key));
@@ -136,7 +156,7 @@ DhConfig : DhDependencyInjectionContainer {
 		arg keyArray;
 		var key = keyArray.removeAt(0);
 		var value = super.at(key);
-		if (value.isNil) {
+		if (value.includesKey(key)) {
 			^ nil;
 		};
 		if (keyArray.size == 0) {
@@ -154,7 +174,7 @@ DhConfig : DhDependencyInjectionContainer {
 		} {
 			var subConfig;
 			subConfig = super.at(key);
-			if (super.at(key).isNil) {
+			if (subConfig.isNil()) {
 				subConfig = this.class.new();
 				super.put(key, subConfig);
 			};
@@ -162,4 +182,21 @@ DhConfig : DhDependencyInjectionContainer {
 		};
 	}
 
+	includesKey {
+		arg key;
+		[\inckey, key].postln;
+		^ this.prIncludesKey(this.splitAddress(key));
+	}
+
+	prIncludesKey {
+		arg keyArray = [];
+		var key = keyArray.removeAt(0);
+		[\keyArray, keyArray, key].postln;
+		if (objects.includesKey(key) and: {this[key].respondsTo(\prIncludesKey)}) {
+			^ this[key].prIncludesKey(keyArray);
+		} {
+			^ true;
+		};
+		^ false;
+	}
 }

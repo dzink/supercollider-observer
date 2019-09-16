@@ -101,4 +101,15 @@ DhModule : DhAtom {
 
 		^ context;
 	}
+
+	log {
+		arg message, messageType = \log;
+		this.service[\log].log(message, messageType);
+		^ this;
+	}
+
+	debug {
+		arg message;
+		this.log(message, \debug);
+	}
 }
