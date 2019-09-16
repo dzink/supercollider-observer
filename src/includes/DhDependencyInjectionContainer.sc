@@ -1,5 +1,5 @@
-DhDependencyInjectionContainer[] : IdentityDictionary {
-	var objects;
+DhDependencyInjectionContainer[] {
+	var <objects;
 
 	*new {
 		var d = super.new();
@@ -7,7 +7,7 @@ DhDependencyInjectionContainer[] : IdentityDictionary {
 	}
 
 	init {
-		objects = IdentityDictionary[];
+		objects = DhAtom[];
 		^ this;
 	}
 
@@ -67,4 +67,36 @@ DhDependencyInjectionContainer[] : IdentityDictionary {
 		var o = objects[key];
 		^ this.prIsUnevaluated(o).not;
 	}
+
+	// Pass thru methods. These allow the DIC to be used like a DhAtom.
+
+	key {
+		^ objects.keys;
+	}
+
+	post {
+		^ objects.post;
+	}
+
+	postln {
+		^ objects.postln;
+	}
+
+	// keysValuesDo {
+	// 	arg function;
+	// 	^ objects.keysValuesDo(function);
+	// }
+
+	doesNotUnderstand {
+		arg method ... args;
+		if (objects.respondsTo(method)) {
+			^ objects.perform(method, *(args));
+		};
+		^ DoesNotUnderstandError(this, method, args).reportError();
+	}
+	//
+	// >> {
+	// 	arg that;
+	// 	^ objects.>>(that);
+	// }
 }

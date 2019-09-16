@@ -18,6 +18,7 @@ DhModule : DhAtom {
 		arg i;
 		id = i;
 		tree = DhTree(this);
+		services = DhAtom();
 		functions = DhAtom();
 		notifiers = DhAtom();
 		observers = DhAtom();
@@ -26,11 +27,16 @@ DhModule : DhAtom {
 
 	service {
 		arg key;
-		
-		if (serviceManager.isNil) {
-			serviceManager = DhAtom();
-		}
-		^ serviceManager;
+		if (this.services[key].isNil.not) {
+			^ this.services[key];
+		};
+		this.trunkFilter({
+			arg m;
+			if (m.services.services[key].isNil.not) {
+				^ m.services.services[key];
+			};
+		});
+		^ nil;
 	}
 
 	registerNotifier {

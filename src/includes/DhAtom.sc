@@ -9,9 +9,14 @@ DhAtom : IdentityDictionary {
 			^ this;
 		} {
 			key = key;
-			value = this.at(key.asSymbol);
+			value = this.at(key);
 			^ value;
 		};
+	}
+
+	at {
+		arg key;
+		^ super.at(key.asSymbol);
 	}
 
 	put {
@@ -23,7 +28,7 @@ DhAtom : IdentityDictionary {
 	sortByProperty {
 		arg key = \weight;
 		var values = this.values.sortMap {
-		arg object;
+			arg object;
 			if (object.isKindOf(Dictionary)) {
 				object[\weight] ?? 0;
 			} {
@@ -36,4 +41,5 @@ DhAtom : IdentityDictionary {
 		};
 		^ values;
 	}
+
 }

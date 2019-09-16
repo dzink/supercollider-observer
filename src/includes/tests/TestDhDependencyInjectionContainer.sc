@@ -28,4 +28,10 @@ TestDhDependencyInjectionContainer : TestDh {
 		value = d[\f];
 		this.assert(b.not, "Function was not run a second time.");
 	}
+
+	test_string {
+		d["string"] = 1;
+		this.assertEquals(d["string"], 1, "DIC works with strings.");
+		this.assertEquals(d[\string], 1, "DIC works with strings.");
+	}
 }

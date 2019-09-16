@@ -13,7 +13,6 @@ DhNotifierObserver : DhNotifier {
 	}
 
 	init {
-		// arg noti, obs;
 		notifier = DhNotifier();
 		observer = DhObserver({
 			arg message;
@@ -31,5 +30,10 @@ DhNotifierObserver : DhNotifier {
 	respond {
 		arg message;
 		this.notify(message);
+	}
+
+	filter_ {
+		arg f;
+		this.observer.filter = f;
 	}
 }
