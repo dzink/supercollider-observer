@@ -11,12 +11,22 @@ TestDhConfig : TestDh {
 
 	test_put {
 		c.put("a.b.c", 1);
-		this.assertEquals(c.at("a.b.c"), 1, "Puts and gets configs.");
+		this.assertEquals(c[\a][\b][\c], 1, "Puts and gets configs.");
+		this.assertEquals(c.at("a.b.c"), 1, "Configs accessible by key.");
 	}
 
 	test_slotSyntax {
 		c["a.b.c"] = 1;
 		this.assertEquals(c["a.b.c"], 1, "Puts and gets slot configs.");
+	}
+
+	test_keys {
+		var keys;
+		c["a.b.c"] = 1;
+		keys = c.keys.sort;
+		this.assertEquals(keys[0], "a", "Gets root key.");
+		this.assertEquals(keys[1], "a.b", "Gets 2nd key.");
+		this.assertEquals(keys[2], "a.b.c", "Gets data key.");
 	}
 
 	test_default {
@@ -26,17 +36,10 @@ TestDhConfig : TestDh {
 		d["a.b.f"] = 3; // Test array.
 		d["a.b.c"] = 4; // Test existing value.
 		c = c.default(d);
-	}
+		this.assertEquals(c["a.b.c"], 1, "Originals not overwritten with defaults");
+		this.assertEquals(c["a.d.e"], 2, "Defaults adds new objects");
 
-	test_config {
-		var s;
-		c["a.b.c.d"] = 1;
-		c["a.b.c.e.f"] = 2;
-		c["a.b.ce.de"] = 4;
-		s = c.subConfig("a.b.c");
-		this.assertEquals(s.at("d"), 1, "Sub config works with objects");
-		this.assertEquals(s.at("e.f"), 2, "Sub config works with long named objects.");
-		this.assertEquals(s.at("e.de"), nil, "Sub config doesn't find partial configs.");
+		c.asCompileString.postln;
 	}
 
 	test_dic {
@@ -48,5 +51,21 @@ TestDhConfig : TestDh {
 		value = c[\f];
 		this.assertEquals(value, 2, "Function is evaluated after being requested.");
 		this.assert(c.isEvaluatedAt(\f), "Function is marked evaluated.");
+	}
+
+	test_yaml {
+		var yaml = "'duck':
+  'duck':
+    'goose':
+    - !!float 1
+    - !!float 2
+    'moose':
+      'what?'";
+		c = DhConfig.fromYaml(yaml);
+		c.keys.postln;
+		this.assertEquals(c["duck.duck.moose"], "what?", "Config yaml import imports objects");
+		this.assert(["duck.duck.goose"].isKindOf(Array), "Config yaml import works with arrays.");
+		this.assertEquals(c["duck.duck.goose.0"].class, Float, "Config yaml import turns numberlike strings into Floats.");
+		this.assertFloatEquals(c["duck.duck.goose.0"], 1, "Config yaml import works with arrays and their members.");
 	}
 }
