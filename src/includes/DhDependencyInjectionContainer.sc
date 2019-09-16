@@ -1,5 +1,4 @@
-DhDependencyInjectionContainer[] {
-	var <objects;
+DhDependencyInjectionContainer : DhNillable {
 
 	*new {
 		var d = super.new();
@@ -7,7 +6,7 @@ DhDependencyInjectionContainer[] {
 	}
 
 	init {
-		objects = DhNillable[];
+		validKeys = IdentityDictionary[];
 		^ this;
 	}
 
@@ -16,87 +15,43 @@ DhDependencyInjectionContainer[] {
 		if (func.isKindOf(Function)) {
 			func = DhDependencyInjectionContainerObject.fromFunction(func, args);
 		};
-		objects[key] = func;
+		super.put(key, func);
 		^ this;
 	}
 
 	putFactory {
 		arg key, func ... args;
-		if (func.isKindOf(Function)) {
-			func = DhDependencyInjectionContainerObject.fromFunction(func, args);
-			func.isFactory = true;
-		};
-		objects[key] = func;
+		this.put(key, func, *(args));
+		func.isFactory = true;
 		^ this;
 	}
 
 	at {
 		arg key;
-		var object = objects.at(key);
-		^ this.prEvaluate(key, object);
+		var object = this.safeAt(key);
+		var value = object;
+		if (this.evaluatedAt(key).not) {
+			value = object.evaluate();
+			if (object.isFactory.not) {
+				super.put(key, value);
+			};
+		};
+		^ value;
 	}
 
-	evaluate {
+	safeAt {
 		arg key;
-		this.at(key);
+		^ super.at(key);
+	}
+
+	evaluatedAt {
+		arg key;
+		var o = this.safeAt(key);
+		^ o.isKindOf(DhDependencyInjectionContainerObject).not;
+	}
+
+	objects {
 		^ this;
 	}
 
-	prEvaluate {
-		arg key, object;
-		var value;
-		value = if (this.prIsUnevaluated(object)) {
-			value = object.evaluate(this);
-			if (object.isFactory.not) {
-				objects[key] = value;
-			};
-			^ value;
-		} {
-			^ object;
-		};
-	}
-
-
-	prIsUnevaluated {
-		arg object;
-		^ (object.isKindOf(DhDependencyInjectionContainerObject));
-	}
-
-	isEvaluatedAt {
-		arg key;
-		var o = objects[key];
-		^ this.prIsUnevaluated(o).not;
-	}
-
-	// Pass thru methods. These allow the DIC to be used like a DhAtom.
-
-	key {
-		^ objects.keys;
-	}
-
-	post {
-		^ objects.post;
-	}
-
-	postln {
-		^ objects.postln;
-	}
-
-	// keysValuesDo {
-	// 	arg function;
-	// 	^ objects.keysValuesDo(function);
-	// }
-
-	doesNotUnderstand {
-		arg method ... args;
-		if (objects.respondsTo(method)) {
-			^ objects.perform(method, *(args));
-		};
-		^ DoesNotUnderstandError(this, method, args).reportError();
-	}
-	//
-	// >> {
-	// 	arg that;
-	// 	^ objects.>>(that);
-	// }
 }

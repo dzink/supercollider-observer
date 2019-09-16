@@ -74,31 +74,40 @@ DhConfig : DhDependencyInjectionContainer {
 			candidateKey = candidateKey.asString;
 			if (candidateKey.beginsWith(keyString)) {
 				var subKey = candidateKey.drop(keyString.size);
-				subConfig.put(subKey, objects[candidateKey]);
+				subConfig.put(subKey, this[candidateKey]);
 			};
 		};
 		^ subConfig;
 	}
 
 	/**
-	 * Return a list of all keys available in this config and all subconfigs,
-	 * properly prefixed for access.
+	 * Return a list of all the keys which point to non-config data.
 	 */
 	keys {
 		var keys = List[];
-		^ this.prKeys(keys, "");
+		^ this.prKeys(keys, "", false);
+	}
+
+	/**
+	 * Return a list of all keys available in this config and all subconfigs,
+	 * properly prefixed for access.
+	 */
+	fullKeys {
+		var keys = List[];
+		^ this.prKeys(keys, "", true);
 	}
 
 	prKeys {
-		arg keys, baseKey = "";
-		keys.addAll(objects.keys.collect{
-			arg k;
-			baseKey ++ k
-		});
-		objects.keysValuesDo {
+		arg keys, baseKey = "", fullKeys = false;
+		this.keysValuesDo {
 			arg key, value;
 			if (value.isKindOf(DhConfig)) {
-				value.prKeys(keys, baseKey ++ key ++ ".");
+				value.prKeys(keys, baseKey ++ key ++ ".", fullKeys);
+				if (fullKeys) {
+					keys.add((baseKey ++ key).asSymbol);
+				}
+			} {
+				keys.add((baseKey ++ key).asSymbol);
 			};
 		};
 		^ keys;
@@ -110,30 +119,56 @@ DhConfig : DhDependencyInjectionContainer {
 	 */
 	default {
 		arg default;
-		default.keys.do {
-			arg key;
-			if (this.includesKey(key)) {
-				var value = default.at(key);
-				if (value.isKindOf(DhConfig).not) {
-					this.put(key, default.at(key));
-				};
-			};
-		};
+		var myKeys = this.fullKeys();
+		var theirKeys = default.keys();
+		var emptyKeys = theirKeys.difference(myKeys);
+		emptyKeys.postln;
+		// default.keys.do {
+		// 	arg key;
+		// 	if (myKeys.includes(key).not) {
+		// 		var value = default.at(key);
+		// 		if (value.isKindOf(DhConfig).not) {
+		// 			this.put(key, default.at(key));
+		// 		};
+		// 	};
+		// };
 		^ this;
+	}
+
+	prDefault {
+		arg default, baseKey = "", myKeys = [];
+		this.keysValuesDo {
+			arg key, value;
+			var candidateKey = (baseKey ++ key).asSymbol;
+			if (myKeys.includes(candidateKey).not) {
+
+			}
+		}
 	}
 
 	toList {
 		var array = List[];
-		var keys = objects.keys.asInteger.sort;
+		var keys = this.keys.asInteger.sort;
 		keys.do {
+			arg key;
 
-		}
+			// @TODO do I want at, or safeAt? Seems like if we're getting a list,
+			// objects should be evaluated...
+			array = array.add(this.at(key));
+		};
+		^ array.asArray();
 	}
 
 	at {
 		arg key;
 		var keyArray = this.splitAddress(key);
-		^ this.prAt(keyArray);
+		^ this.prAt(keyArray, true);
+	}
+
+	safeAt {
+		arg key;
+		var keyArray = this.splitAddress(key);
+		^ this.prAt(keyArray, false);
 	}
 
 	put {
@@ -153,16 +188,18 @@ DhConfig : DhDependencyInjectionContainer {
 	}
 
 	prAt {
-		arg keyArray;
+		arg keyArray, evaluate = true;
 		var key = keyArray.removeAt(0);
-		var value = super.at(key);
-		if (value.includesKey(key)) {
-			^ nil;
-		};
+		var value;
+		value = if (evaluate) { super.at(key) } { super.safeAt(key) };
 		if (keyArray.size == 0) {
 			^ value;
 		} {
-			^ value.prAt(keyArray);
+			if (value.respondsTo(\prAt)) {
+				^ value.prAt(keyArray, evaluate);
+			} {
+				^ nil;
+			};
 		};
 	}
 
@@ -173,8 +210,8 @@ DhConfig : DhDependencyInjectionContainer {
 			super.put(key, value);
 		} {
 			var subConfig;
-			subConfig = super.at(key);
-			if (subConfig.isNil()) {
+			subConfig = this.safeAt(key);
+			if (subConfig.isKindOf(DhConfig).not) {
 				subConfig = this.class.new();
 				super.put(key, subConfig);
 			};
@@ -184,15 +221,13 @@ DhConfig : DhDependencyInjectionContainer {
 
 	includesKey {
 		arg key;
-		[\inckey, key].postln;
-		^ this.prIncludesKey(this.splitAddress(key));
+		^ this.keys.includes(key);
 	}
 
 	prIncludesKey {
 		arg keyArray = [];
 		var key = keyArray.removeAt(0);
-		[\keyArray, keyArray, key].postln;
-		if (objects.includesKey(key) and: {this[key].respondsTo(\prIncludesKey)}) {
+		if (super.includesKey(key) and: {this.safeAt(key).respondsTo(\prIncludesKey)}) {
 			^ this[key].prIncludesKey(keyArray);
 		} {
 			^ true;

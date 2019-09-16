@@ -17,10 +17,10 @@ TestDhDependencyInjectionContainer : TestDh {
 
 	test_at {
 		var value;
-		this.assert(d.isEvaluatedAt(\f).not, "Function is not yet evaluated.");
+		this.assert(d.evaluatedAt(\f).not, "Function is not yet evaluated.");
 		value = d[\f];
 		this.assertEquals(value, 2, "Function is evaluated after being requested.");
-		this.assert(d.isEvaluatedAt(\f), "Function is marked evaluated.");
+		this.assert(d.evaluatedAt(\f), "Function is marked evaluated.");
 
 		// Use the b switch to see if the function is run a second time.
 		this.assert(b, "B was switched to true.");
