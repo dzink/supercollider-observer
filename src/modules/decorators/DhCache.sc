@@ -12,7 +12,7 @@ DhCache : DhAtom {
 	}
 
 	cacheAside {
-		arg key, default;
+		arg key, default = {};
 		if (this.includesKey(key).not) {
 			var v = default.value();
 			this.put(key, v);
