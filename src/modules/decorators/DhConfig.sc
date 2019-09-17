@@ -289,4 +289,32 @@ DhConfig : DhDependencyInjectionContainer {
 			};
 		};
 	}
+
+	storeItemsOn { | stream |
+		var addComma = false;
+		var keys = this.keys;
+		keys.do {
+			arg key;
+			var item = this.at(key);
+			if (stream.atLimit) { ^ this };
+			if (addComma) { stream.comma.space; } { addComma = true };
+			key.storeOn(stream);
+			stream << " -> ";
+			item.storeOn(stream);
+		};
+	}
+
+	printItemsOn { | stream |
+		var addComma = false;
+		var keys = this.keys;
+		keys.do {
+			arg key;
+			var item = this.at(key);
+			if (stream.atLimit) { ^ this };
+			if (addComma) { stream.comma.space; } { addComma = true };
+			key.printOn(stream);
+			stream << " -> ";
+			item.printOn(stream);
+		};
+	}
 }

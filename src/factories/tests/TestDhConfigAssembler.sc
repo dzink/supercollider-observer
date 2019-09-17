@@ -35,7 +35,11 @@ TestDhConfigAssembler : TestDh {
 		// var save_path =
 		// a.getFrom("/Users/danzinkevich/Library/Application Support/SuperCollider/hooks/core/src/");
 		// a.addDependencyDefaults();
-		// a.assemble();
+		var configs = a.assemble();
+		this.assert(configs["core:service:server"].includesKey("serverOptions.sampleRate"), "Config imports sampleRate");
+		this.assert(configs["core:service:stereo_server"].includesKey("serverOptions.sampleRate"), "Stereo config imports sampleRate");
+		configs["core:service:stereo_server"].postcs;
+
 	}
 
 	// test_loadConfigs {
