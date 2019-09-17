@@ -29,15 +29,22 @@ DhAbstractFactory {
 		 ^ class.asSymbol.asClass.new();//perform("*new".asSymbol);
 	}
 
+	/**
+	 * Assign basic properties, which are defined in the \basicProperties key
+	 * of the member config.
+	 */
 	buildBasics {
 		arg m, config;
-		this.getBasicPropertyList(config).keysValuesDo {
-			arg key, propertyConfig;
-			var sourceKey = propertyConfig[\sourceKey];
-			var method = propertyConfig[\targetMethod];
-			if (config.includesKey(sourceKey)) {
-				var data = config[sourceKey];
-				m.perform(method.asSymbol, data);
+		var propertyList = this.getBasicPropertyList(config);
+		if (propertyList.isNil.not) {
+			propertyList.keysValuesDo {
+				arg key, propertyConfig;
+				var sourceKey = propertyConfig[\sourceKey];
+				var method = propertyConfig[\targetMethod];
+				if (config.includesKey(sourceKey)) {
+					var data = config[sourceKey];
+					m.perform(method.asSymbol, data);
+				};
 			};
 		};
 	}
@@ -47,14 +54,27 @@ DhAbstractFactory {
 		^ this.getPropertyList(config, \basicProperties);
 	}
 
+	/**
+	 * Goes through the list of member types.
+	 * Get lists of member types, then pass configs to build member groups.
+	 */
 	buildMembers {
 		arg m, config;
-		this.getMemberPropertyLists(config).keysValuesDo {
-			arg key, buildConfig;
-			this.buildMemberGroup(m, config, buildConfig);
+		var memberPropertyLists = this.getMemberPropertyLists(config);
+		if (memberPropertyLists.isNil.not) {
+			memberPropertyLists.keysValuesDo {
+				arg key, buildConfig;
+				this.buildMemberGroup(m, config, buildConfig);
+			};
 		};
 	}
 
+	/**
+	 * Goes through the list of member instances.
+	 * Get the list of members, then iterate across its keys. We need to use its
+	 * keys because sometimes simple members (such as notifiers) simply need to
+	 * have their key defined.
+	 */
 	buildMemberGroup {
 		arg m, config, buildConfig;
 		var member;
@@ -63,17 +83,28 @@ DhAbstractFactory {
 		var baseConfig = configs[buildConfig[\base_config]];
 
 		if (memberList.isNil.not) {
-			memberList.keysValuesDo {
-				arg key, memberConfig;
-				var member = this.buildMemberGroupMember(memberConfig, baseConfig);
+			memberList.baseKeys.do {
+				arg key;
+				var member, memberConfig;
+				memberConfig = memberList[key];
+				member = this.buildMemberGroupMember(memberConfig, baseConfig);
 				m.perform(method, member, key, memberConfig);
 			};
 		};
 	}
 
+	/**
+	 * Build each member. Add a base config for defaults for each.
+	 */
 	buildMemberGroupMember {
 		arg memberConfig, baseConfig;
 		var member;
+
+		// If a member list is just keys, the configs will be empty.
+		if (memberConfig.isNil) {
+			memberConfig = DhConfig();
+		};
+
 		memberConfig.default(baseConfig);
 		member = this.build(memberConfig);
 		^ member;

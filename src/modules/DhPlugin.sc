@@ -2,6 +2,10 @@ DhPlugin[] {
 	var < methods;
 	var < data;
 	var < config;
+	var < observers;
+	var < notifiers;
+	var < services;
+	var <> id;
 
 	*new {
 		^ super.new.init();

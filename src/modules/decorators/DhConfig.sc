@@ -94,6 +94,13 @@ DhConfig : DhDependencyInjectionContainer {
 	}
 
 	/**
+	 * Return a list of keys for this level of config only.
+	 */
+	baseKeys {
+		^ super.keys;
+	}
+
+	/**
 	 * Return a list of all keys available in this config and all subconfigs,
 	 * properly prefixed for access.
 	 */
@@ -104,7 +111,7 @@ DhConfig : DhDependencyInjectionContainer {
 
 	prKeys {
 		arg keys, baseKey = "", fullKeys = false;
-		super.keys.do {
+		this.baseKeys.do {
 			arg key;
 			var value = this.safeAt(key);
 			if (value.isKindOf(DhConfig)) {

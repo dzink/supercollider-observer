@@ -51,7 +51,7 @@ TestDhConfig : TestDh {
 	}
 
 	test_default {
-		var d = DhConfig();
+		var d = DhConfig(), e = DhConfig();
 		c["a.b.c"] = 1;
 		c["a.b.nil"] = nil;
 		d["a.d.e"] = 2; // Test value.
@@ -63,6 +63,9 @@ TestDhConfig : TestDh {
 		this.assertEquals(c["a.d.e"], 2, "Defaults adds new objects.");
 		this.assert(c["a.b.nil"].isNil(), "Config is nillable.");
 		this.assert(c.includesKey("a.b.nil"), "Config is nillable.");
+
+		// e = DhConfig();
+		c = c.default(e);
 	}
 
 	test_dic {

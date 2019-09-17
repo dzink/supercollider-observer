@@ -22,7 +22,7 @@ TestDhAbstractFactory : TestDh {
 		// [\dddd, f.builtMembers].postcs;
 		f.builtMembers.do {
 			arg member;
-			member.id.postln;
+			member.class.postln;
 		};
 		f.builtMembers.size.postln;
 	}
