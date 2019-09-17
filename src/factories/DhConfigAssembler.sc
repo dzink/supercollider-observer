@@ -1,5 +1,9 @@
 DhConfigAssembler {
 	var <configs;
+	var <>compilePath = "./compiled";
+	var <>sourcePath = "./src";
+	var <>sourceDepth = 3;
+	var <>extensions;
 
 	*new {
 		var a = super.new();
@@ -7,30 +11,34 @@ DhConfigAssembler {
 	}
 
 	init {
-		configs = DhAtom();
+		extensions = [".yml", ".yaml"];
 		^ this;
 	}
 
-	getFrom {
-		arg path, depth = 3, extensions = [".yml", ".yaml"];
-		var candidatePaths = this.getCandidatePaths(path, depth, extensions);
-		var paths = this.findConfigFiles(candidatePaths);
-		this.loadConfigs(paths);
+	assemble {
+		var inProgressConfigs, order, candidatePaths, paths;
+		inProgressConfigs = DhAtom();
+		paths = this.findConfigFiles(candidatePaths);
+		inProgressConfigs = this.loadConfigsPaths(inProgressConfigs, paths);
+		inProgressConfigs = this.addDependencyBases(inProgressConfigs);
+		configs = inProgressConfigs;
+		^ inProgressConfigs;
 	}
 
-	addDependencyDefaults {
-		var order = this.resolveDependencyOrder();
-		order.do {
-			arg config;
-			configs[config].addBaseDefaults(configs);
+	findConfigFiles {
+		var candidatePaths = this.getCandidatePaths();
+		var paths = List[];
+		candidatePaths.do {
+			arg testPath;
+			paths.addAll(testPath.pathMatch())
 		};
+		^ paths;
 	}
 
 	getCandidatePaths {
-		arg basePath, depth = 3, extensions = [".yml", ".yaml"];
-		var subPaths = Array[basePath, Array(depth), Array(extensions.size)];
+		var subPaths = Array[sourcePath, Array(sourceDepth), Array(extensions.size)];
 		var wilds = "";
-		(1..depth).do {
+		(1..sourceDepth).do {
 			arg n;
 			wilds = wilds ++ "/*";
 			subPaths[1].add(wilds);
@@ -47,44 +55,37 @@ DhConfigAssembler {
 		^ subPaths;
 	}
 
-	findConfigFiles {
-		arg candidatePaths;
-		var paths = List[];
-		candidatePaths.do {
-			arg testPath;
-			paths.addAll(testPath.pathMatch())
-		};
-		^ paths;
-	}
-
-	loadConfigs {
-		arg paths;
+	loadConfigsPaths {
+		arg inProgressConfigs, paths;
 		paths.do {
 			arg path;
 			var config;
 			config = DhConfig.fromYamlFile(path);
-			configs[config[\id]] = config;
+			inProgressConfigs[config[\id]] = config;
 		};
+		^ inProgressConfigs;
 	}
 
-	buildDependencyOrder {
-		var edges = DhAtom();
-		configs.keysValuesDo {
-			arg key, config;
-			var myEdges = config.keys.select({
-				arg key;
-				(key.asSymbol == \base or: {
-					key.asString.endsWith(".base");
-				});
-			});
-			edges[key] = myEdges;
+	/**
+	 * Add dependency defaults.
+	 * Anywhere a config has a `base` key, that key's parent should have all the
+	 * objects of the config with that base imported as defaults.
+	 */
+	addDependencyBases {
+		arg inProgressConfigs;
+		var order = this.resolveDependencyOrder(inProgressConfigs);
+		order.do {
+			arg config;
+			inProgressConfigs[config].addBaseDefaults(inProgressConfigs);
 		};
+		^ inProgressConfigs;
 	}
 
 	resolveDependencyOrder {
+		arg inProgressConfigs;
 		var edges = DhAtom();
 		var order = List[];
-		configs.keysValuesDo {
+		inProgressConfigs.keysValuesDo {
 			arg key, config;
 			edges[key] = config.getBases().values;
 		};
@@ -106,5 +107,19 @@ DhConfigAssembler {
 			};
 		};
 		^ order;
+	}
+
+	saveCompiled {
+		arg path;
+		configs.keysValuesDo {
+			arg key, config;
+			var path = compilePath +/+ config[\id] ++ ".sc";
+			var data = config.asCompileString();
+			[\write, path, data].postcs;
+			File.use(path, "w", {
+				arg file;
+				file.write(config.asCompileString);
+			});
+		};
 	}
 }

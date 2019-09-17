@@ -22,8 +22,8 @@ DhModuleFactory {
 		arg m, config;
 		var services = config["services"];
 		services.keysValuesDo {
-			arg key, value;
-			m.service
+			arg key, serviceConfig;
+			var service = serviceConfig[\class].new();
 		}
 	}
 }
