@@ -3,17 +3,13 @@ DhConfig : DhDependencyInjectionContainer {
 	*fromYaml {
 		arg yaml;
 		var yamlConfig = yaml.parseYAML();
-		^ DhConfig.from(yamlConfig, IdentityDictionary[
-			\convertTypes -> true,
-		]);
+		^ DhConfig.from(yamlConfig).convertTypes();
 	}
 
 	*fromYamlFile {
 		arg yamlFile;
 		var yamlConfig = yamlFile.parseYAMLFile();
-		^ DhConfig.from(yamlConfig, IdentityDictionary[
-			\convertTypes -> true,
-		]);
+		^ DhConfig.from(yamlConfig).convertTypes();
 	}
 
 	*from {
@@ -36,9 +32,7 @@ DhConfig : DhDependencyInjectionContainer {
 			if (value.isKindOf(Dictionary)) {
 				this.prParseObject(baseKey ++ key ++ ".", value, options);
 			} {
-				if (convertTypes) {
-					value = this.convertTypes(value);
-				};
+
 				this.put(baseKey ++ key, value);
 			};
 		};
@@ -46,6 +40,17 @@ DhConfig : DhDependencyInjectionContainer {
 	}
 
 	convertTypes {
+		var keys = this.keys;
+		keys.do {
+			arg key;
+			var value = this.safeAt(key);
+			if (value.isKindOf(String)) {
+				this.put(key, this.prConvertStringType(value))
+			};
+		};
+	}
+
+	prConvertStringType {
 		arg value;
 		if ("^-*[\\d\\.]$".matchRegexp(value)) {
 			^ value.asFloat;
@@ -99,8 +104,9 @@ DhConfig : DhDependencyInjectionContainer {
 
 	prKeys {
 		arg keys, baseKey = "", fullKeys = false;
-		this.keysValuesDo {
-			arg key, value;
+		super.keys.do {
+			arg key;
+			var value = this.safeAt(key);
 			if (value.isKindOf(DhConfig)) {
 				value.prKeys(keys, baseKey ++ key ++ ".", fullKeys);
 				if (fullKeys) {
@@ -119,20 +125,44 @@ DhConfig : DhDependencyInjectionContainer {
 	 */
 	default {
 		arg default;
-		var myKeys = this.fullKeys();
-		var theirKeys = default.keys();
-		var emptyKeys = theirKeys.difference(myKeys);
-		emptyKeys.postln;
-		// default.keys.do {
-		// 	arg key;
-		// 	if (myKeys.includes(key).not) {
-		// 		var value = default.at(key);
-		// 		if (value.isKindOf(DhConfig).not) {
-		// 			this.put(key, default.at(key));
-		// 		};
-		// 	};
-		// };
+		var emptyKeys = this.prFindFreeDefaultKeys(default);
+
+		emptyKeys.do {
+			arg key;
+			this[key] = default.safeAt(key);
+		};
 		^ this;
+	}
+
+	prFindFreeDefaultKeys {
+		arg default;
+		var myKeys = this.fullKeys(), theirKeys = default.keys(), emptyKeys, myEndPoints;
+		// Starting off by eliminating duplicate keys from default right off.
+		emptyKeys = theirKeys.difference(myKeys);
+		myEndPoints = this.keys();
+
+		emptyKeys = emptyKeys.reject {
+			arg emptyKey;
+			this.prFindFreeDefaultKeyBase(myEndPoints, emptyKey);
+		};
+
+		^ emptyKeys;
+	}
+
+	/**
+	 * Find if a candidate key can be written without overwriting other data.
+	 */
+	prFindFreeDefaultKeyBase {
+		arg myEndPoints, emptyKey;
+		emptyKey = emptyKey.asString();
+		myEndPoints.do {
+			arg myEndPoint;
+			myEndPoint = myEndPoint.asString;
+			if (emptyKey.beginsWith(myEndPoint)) {
+				^ true;
+			};
+		};
+		^ false;
 	}
 
 	prDefault {
@@ -221,17 +251,42 @@ DhConfig : DhDependencyInjectionContainer {
 
 	includesKey {
 		arg key;
-		^ this.keys.includes(key);
+		^ this.fullKeys.includes(key.asSymbol);
 	}
 
-	prIncludesKey {
-		arg keyArray = [];
-		var key = keyArray.removeAt(0);
-		if (super.includesKey(key) and: {this.safeAt(key).respondsTo(\prIncludesKey)}) {
-			^ this[key].prIncludesKey(keyArray);
-		} {
-			^ true;
+	/**
+	 * Anything that is "base" or ends in ".base" is a requirement.
+	 */
+	getBases {
+		var baseKeys = this.keys.select({
+			arg key;
+			(key.asSymbol == \base or: {
+				key.asString.endsWith(".base");
+			});
+		});
+		baseKeys = baseKeys.collect({
+			arg key;
+			[key, this[key].asSymbol];
+		});
+		^ DhAtom.newFrom(baseKeys.flatten);
+	}
+
+	/**
+	 * Given a Dictionary of configs, place the defaults where this config has the
+	 * key *.base.
+	 */
+	addBaseDefaults {
+		arg configs;
+		this.getBases.keysValuesDo {
+			arg key, base;
+			if (key == \base) {
+				this.default(configs[base]);
+			} {
+
+				// Is this REALLY the best way to do a substring in sclang???
+				var configKey = key.asString.copyRange(0, key.asString.size -6);
+				this[configKey].default(configs[base]);
+			};
 		};
-		^ false;
 	}
 }
