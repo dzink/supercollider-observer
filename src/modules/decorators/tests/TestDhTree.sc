@@ -80,12 +80,12 @@ TestDhTree : TestDh {
 		];
 		c = c1.prTrunkFilter({
 			arg o;
-			o.dog == \woof;
+			o[\dog] == \woof;
 		});
 		this.assertEquals(c, t, "Trunk filter finds immediate parent.");
 		c = c1.prTrunkFilter({
 			arg o;
-			o.cat == \meow;
+			o[\cat] == \meow;
 		});
 		this.assertEquals(c, p, "Trunk filter finds root.");
 	}

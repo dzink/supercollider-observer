@@ -115,7 +115,6 @@ DhConfigAssembler {
 			arg key, config;
 			var path = compilePath +/+ config[\id] ++ ".sc";
 			var data = config.asCompileString();
-			[\write, path, data].postcs;
 			File.use(path, "w", {
 				arg file;
 				file.write(config.asCompileString);

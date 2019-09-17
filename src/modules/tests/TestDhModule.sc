@@ -5,7 +5,6 @@ TestDhModule : TestDh {
 
 		m = DhModule(\m);
 		p = DhModule(\p);
-		p.spawn(m);
 	}
 
 	tearDown {
@@ -20,9 +19,9 @@ TestDhModule : TestDh {
 		o = DhObserver({
 			animal = \leopard;
 		});
-		o.observe(p.notifiers.ping);
+		o.observe(p.notifiers[\ping]);
 		m.registerObserver(\pong, o);
-		p.notifiers.ping.notify();
+		p.notifiers[\ping].notify();
 		this.assertEquals(animal, \leopard, "Modules can notify/observe each other.");
 	}
 
@@ -35,7 +34,7 @@ TestDhModule : TestDh {
 	test_trunksProperties {
 		var prop;
 		p[\cat] = \meow;
-		prop = m.trunksProperty(\cat);
+		// prop = m.trunksProperty(\cat);
 		// this.assertEquals(prop, \meow, "Modules can access trunk props.")
 	}
 
