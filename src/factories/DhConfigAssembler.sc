@@ -2,7 +2,7 @@ DhConfigAssembler {
 	var <configs;
 	var <>compilePath = "./compiled";
 	var <>sourcePath = "./src";
-	var <>sourceDepth = 3;
+	var <>sourceDepth = 5;
 	var <>extensions;
 
 	*new {

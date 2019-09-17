@@ -293,28 +293,30 @@ DhConfig : DhDependencyInjectionContainer {
 	storeItemsOn { | stream |
 		var addComma = false;
 		var keys = this.keys;
-		keys.do {
+		stream << "\n";
+		keys.sort.do {
 			arg key;
 			var item = this.at(key);
 			if (stream.atLimit) { ^ this };
-			if (addComma) { stream.comma.space; } { addComma = true };
+			stream << "  ";
 			key.storeOn(stream);
 			stream << " -> ";
 			item.storeOn(stream);
+			stream << ",\n";
 		};
 	}
 
 	printItemsOn { | stream |
 		var addComma = false;
 		var keys = this.keys;
-		keys.do {
+		keys.sort.do {
 			arg key;
 			var item = this.at(key);
 			if (stream.atLimit) { ^ this };
-			if (addComma) { stream.comma.space; } { addComma = true };
 			key.printOn(stream);
 			stream << " -> ";
 			item.printOn(stream);
+			stream.comma.space;
 		};
 	}
 }
