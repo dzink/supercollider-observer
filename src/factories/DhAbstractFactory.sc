@@ -93,31 +93,4 @@ DhAbstractFactory {
 		});
 		^ candidates;
 	}
-
-	// buildServices {
-	// 	arg m, config;
-	// 	var services = config["services"];
-	// 	services.keysValuesDo {
-	// 		arg key, serviceConfig;
-	// 		var service = serviceConfig[\class].new();
-	// 	}
-	// }
-
-	buildBuildKeys {
-		arg config;
-		var keys = this.getBuildKeys(config);
-
-	}
-
-	getBuildKeys {
-		arg config;
-		^ config[\buildKeys].select({
-			arg bool;
-			bool.asBoolean;
-		});
-	}
-
-
-
-
 }

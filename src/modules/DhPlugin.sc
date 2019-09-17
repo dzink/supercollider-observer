@@ -14,6 +14,21 @@ DhPlugin[] {
 		^ this;
 	}
 
+	addService {
+		arg service, key, memberConfig;
+		"adding service".postln;
+	}
+
+	addObserver {
+		arg observer, key, memberConfig;
+		"adding observer".postln;
+	}
+
+	addNotifier {
+		arg notifier, key, memberConfig;
+		"adding notifier".postln;
+	}
+
 	at {
 		arg key;
 		^ data[key];
