@@ -22,10 +22,11 @@ DhModule : DhPlugin {
 	addSubmodule {
 		arg module, key, memberConfig;
 		var moduleDic = {
-			module.run(\init);
+			// module.run(\initModule);
+			module;
 		};
-		submodules[key]= moduleDic;
-		"adding module".postln;
+		this.submodules[key]= moduleDic;
+		^ this;
 	}
 
 	// service {

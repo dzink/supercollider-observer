@@ -21,23 +21,34 @@ DhPlugin[] : DhObject {
 
 	addService {
 		arg service, key, memberConfig;
-		service.setOwner(this);
-		// [\addingService, services.class, this, key].postln;
-		services[key] = service;
+		var serviceDic = {
+			service.setOwner(this);
+			// service.run(\serviceInit);
+			service;
+		};
+		this.services[key]= serviceDic;
 		^ this;
 	}
 
 	addObserver {
 		arg observer, key, memberConfig;
-		observer.setOwner(this);
-		this.observers[key] = observer;
+		var observerDic = {
+			observer.setOwner(this);
+			// observer.run(\observerInit);
+			observer;
+		};
+		this.observers[key]= observerDic;
 		^ this;
 	}
 
 	addNotifier {
 		arg notifier, key, memberConfig;
-		notifier.setOwner(this);
-		this.notifiers[key] = notifier;
+		var notifierDic = {
+			notifier.setOwner(this);
+			// notifier.run(\notifierInit);
+			notifier;
+		};
+		this.notifiers[key]= notifierDic;
 		^ this;
 	}
 
@@ -86,7 +97,7 @@ DhPlugin[] : DhObject {
 
 	service {
 		arg key;
-		[\lookingForService, key, services.keys].postln;
+		// @TODO this should look up the tree as well.
 		^ services[key];
 	}
 }
