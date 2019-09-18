@@ -94,9 +94,9 @@ DhConfig : DhDependencyInjectionContainer {
 	}
 
 	/**
-	 * Return a list of keys for this level of config only.
+	 * Return a list of keys for the top level of config only.
 	 */
-	baseKeys {
+	topKeys {
 		^ super.keys;
 	}
 
@@ -111,7 +111,7 @@ DhConfig : DhDependencyInjectionContainer {
 
 	prKeys {
 		arg keys, baseKey = "", fullKeys = false;
-		this.baseKeys.do {
+		this.topKeys.do {
 			arg key;
 			var value = this.safeAt(key);
 			if (value.isKindOf(DhConfig)) {
@@ -265,17 +265,17 @@ DhConfig : DhDependencyInjectionContainer {
 	 * Anything that is "base" or ends in ".base" is a requirement.
 	 */
 	getBases {
-		var baseKeys = this.keys.select({
+		var topKeys = this.keys.select({
 			arg key;
 			(key.asSymbol == \base or: {
 				key.asString.endsWith(".base");
 			});
 		});
-		baseKeys = baseKeys.collect({
+		topKeys = topKeys.collect({
 			arg key;
 			[key, this[key].asSymbol];
 		});
-		^ DhAtom.newFrom(baseKeys.flatten);
+		^ DhAtom.newFrom(topKeys.flatten);
 	}
 
 	/**
@@ -324,6 +324,16 @@ DhConfig : DhDependencyInjectionContainer {
 			stream << " -> ";
 			item.printOn(stream);
 			stream.comma.space;
+		};
+	}
+
+	sortKeysByProperty {
+		arg property = \weight;
+		var keys = this.topKeys;
+		^ keys.asArray.sortMap {
+			arg key;
+			var weight = this.determineWeight(this[key], property);
+			weight;
 		};
 	}
 }

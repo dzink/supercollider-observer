@@ -27,4 +27,73 @@ TestDhNillable : TestDh {
 		n[\a] = nil;
 		this.assert(n.keys.includes(\a), "Keys includes nil object.");
 	}
+
+	test_sort {
+		var list;
+		n[\hamster] = DhAtom[
+			\key -> \hamster,
+			\weight -> 4,
+		];
+		n[\cat] = DhAtom[
+			\key -> \cat,
+			\weight -> -1,
+		];
+		n[\dog] = DhAtom[
+			\key -> \dog,
+			\weight -> 1,
+		];
+		n[\nil] = nil;
+		list = n.sortByProperty();
+		this.assertEquals(list[0][\key], \cat, "Cat goes first.");
+		this.assert(list[1].isNil, "Nil has a weight of 0.");
+		this.assertEquals(list[2][\key], \dog, "Dog goes third.");
+		this.assertEquals(list[3][\key], \hamster, "Hamster goes fourth.");
+	}
+
+	test_sortKey {
+		var list;
+		n[\hamster] = DhAtom[
+			\key -> \hamster,
+			\weight -> 4,
+		];
+		n[\cat] = DhAtom[
+			\key -> \cat,
+			\weight -> -1,
+		];
+		n[\dog] = DhAtom[
+			\key -> \dog,
+			\weight -> 1,
+		];
+		n[\nil] = nil;
+		list = n.sortKeysByProperty();
+		this.assertEquals(list[0], \cat, "Cat goes first.");
+		this.assertEquals(list[1], \nil, "Nil has a weight of 0.");
+		this.assertEquals(list[2], \dog, "Dog goes third.");
+		this.assertEquals(list[3], \hamster, "Hamster goes last.");
+	}
+
+	test_weightedKeysValuesDo {
+		var list = List[];
+		n[\hamster] = DhAtom[
+			\key -> \hamster,
+			\weight -> 4,
+		];
+		n[\cat] = DhAtom[
+			\key -> \cat,
+			\weight -> -1,
+		];
+		n[\dog] = DhAtom[
+			\key -> \dog,
+			\weight -> 1,
+		];
+		n[\nil] = nil;
+		n.weightedKeysValuesDo {
+			arg key, value;
+			list.add(value);
+		};
+		this.assertEquals(list[0][\key], \cat, "Cat goes first.");
+		this.assertEquals(list[1], nil, "Nil has a weight of 0.");
+		this.assertEquals(list[2][\key], \dog, "Dog goes third.");
+		this.assertEquals(list[3][\key], \hamster, "Hamster goes last.");
+	}
 }

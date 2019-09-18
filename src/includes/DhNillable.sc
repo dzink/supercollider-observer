@@ -41,4 +41,13 @@ DhNillable : DhAtom {
 		arg key;
 		^ validKeys[key] ?? false;
 	}
+
+	sortByProperty {
+		arg property = \weight;
+		var keys = this.sortKeysByProperty(property);
+		^ keys.collect({
+			arg key;
+			this[key];
+		});
+	}
 }
