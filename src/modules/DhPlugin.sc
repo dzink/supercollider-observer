@@ -1,9 +1,8 @@
-DhPlugin[] {
+DhPlugin[] : DhObject {
 	var < methods;
 	var < data;
-	var < config;
-	var < observers;
-	var < notifiers;
+	// var < observers;
+	// var < notifiers;
 	var < services;
 	var <> id;
 
@@ -15,22 +14,31 @@ DhPlugin[] {
 		methods = DhAtom();
 		data = DhDependencyInjectionContainer();
 		config = DhConfig();
+		services = DhDependencyInjectionContainer();
+		// [\servicesInit, services].postln;
 		^ this;
 	}
 
 	addService {
 		arg service, key, memberConfig;
-		"adding service".postln;
+		service.setOwner(this);
+		// [\addingService, services.class, this, key].postln;
+		services[key] = service;
+		^ this;
 	}
 
 	addObserver {
 		arg observer, key, memberConfig;
-		"adding observer".postln;
+		observer.setOwner(this);
+		this.observers[key] = observer;
+		^ this;
 	}
 
 	addNotifier {
 		arg notifier, key, memberConfig;
-		"adding notifier".postln;
+		notifier.setOwner(this);
+		this.notifiers[key] = notifier;
+		^ this;
 	}
 
 	at {
@@ -66,5 +74,19 @@ DhPlugin[] {
 
 	defaultDataStore {
 		^ data;
+	}
+
+	observers {
+		^ this.service(\observers);
+	}
+
+	notifiers {
+		^ this.service(\notifiers);
+	}
+
+	service {
+		arg key;
+		[\lookingForService, key, services.keys].postln;
+		^ services[key];
 	}
 }

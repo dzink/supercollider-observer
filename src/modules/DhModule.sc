@@ -1,6 +1,7 @@
 DhModule : DhPlugin {
 	var <id;
 	var < tree;
+	var < submodules;
 
 	*new {
 		arg id;
@@ -13,11 +14,17 @@ DhModule : DhPlugin {
 		arg i;
 		id = i;
 		tree = DhTree(this);
+		submodules = DhDependencyInjectionContainer();
+		super.init();
 		^ this;
 	}
 
 	addSubmodule {
-		arg module;
+		arg module, key, memberConfig;
+		var moduleDic = {
+			module.run(\init);
+		};
+		submodules[key]= moduleDic;
 		"adding module".postln;
 	}
 

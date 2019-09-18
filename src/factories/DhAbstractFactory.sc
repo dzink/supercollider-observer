@@ -18,7 +18,7 @@ DhAbstractFactory {
 		var member;
 		member = this.buildClass(config);
 		this.buildBasics(member, config);
-		this.buildMembers(member, config);
+		this.buildMemberTypes(member, config);
 		builtMembers = builtMembers.add(member);
 		^ member;
 	}
@@ -37,13 +37,13 @@ DhAbstractFactory {
 		arg m, config;
 		var propertyList = this.getBasicPropertyList(config);
 		if (propertyList.isNil.not) {
-			propertyList.keysValuesDo {
+			propertyList.weightedKeysValuesDo {
 				arg key, propertyConfig;
 				var sourceKey = propertyConfig[\sourceKey];
 				var method = propertyConfig[\targetMethod];
 				if (config.includesKey(sourceKey)) {
-					var data = config[sourceKey];
-					m.perform(method.asSymbol, data);
+					// var data = config[sourceKey];
+					// m.perform(method.asSymbol, data);
 				};
 			};
 		};
@@ -58,11 +58,11 @@ DhAbstractFactory {
 	 * Goes through the list of member types.
 	 * Get lists of member types, then pass configs to build member groups.
 	 */
-	buildMembers {
+	buildMemberTypes {
 		arg m, config;
 		var memberPropertyLists = this.getMemberPropertyLists(config);
 		if (memberPropertyLists.isNil.not) {
-			memberPropertyLists.keysValuesDo {
+			memberPropertyLists.weightedKeysValuesDo {
 				arg key, buildConfig;
 				this.buildMemberGroup(m, config, buildConfig);
 			};
@@ -83,10 +83,16 @@ DhAbstractFactory {
 		var baseConfig = configs[buildConfig[\base_config]];
 
 		if (memberList.isNil.not) {
-			memberList.baseKeys.do {
-				arg key;
-				var member, memberConfig;
-				memberConfig = memberList[key];
+			memberList.weightedKeysValuesDo {
+				arg key, memberConfig;
+				var member;
+
+				// If a member list is just keys, the configs will be empty.
+				if (memberConfig.isNil) {
+					memberConfig = DhConfig();
+				};
+
+				memberConfig.default(DhConfig[\key -> key]);
 				member = this.buildMemberGroupMember(memberConfig, baseConfig);
 				m.perform(method, member, key, memberConfig);
 			};
@@ -100,13 +106,9 @@ DhAbstractFactory {
 		arg memberConfig, baseConfig;
 		var member;
 
-		// If a member list is just keys, the configs will be empty.
-		if (memberConfig.isNil) {
-			memberConfig = DhConfig();
-		};
-
 		memberConfig.default(baseConfig);
 		member = this.build(memberConfig);
+		member.storeConfig(memberConfig);
 		^ member;
 	}
 

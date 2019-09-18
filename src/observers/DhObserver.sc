@@ -1,4 +1,4 @@
-DhObserver {
+DhObserver : DhObject {
 
 	var <>function = nil;
 	var <>filter = nil;

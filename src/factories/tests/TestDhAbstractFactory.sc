@@ -16,14 +16,11 @@ TestDhAbstractFactory : TestDh {
 
 	test_factory {
 		var configs = a.assemble();
+		var root;
 		f.configs = configs;
-		// configs[\test].postcs;
-		f.build(configs[\test]);
-		// [\dddd, f.builtMembers].postcs;
+		root = f.build(configs[\test]);
 		f.builtMembers.do {
 			arg member;
-			member.class.postln;
 		};
-		f.builtMembers.size.postln;
 	}
 }

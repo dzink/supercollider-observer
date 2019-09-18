@@ -2,7 +2,7 @@
  * DhNotifier.sc
  * A class to send notifications to observeers.
  */
-DhNotifier {
+DhNotifier : DhObject {
 	var id = 0;
 	var <observers = nil;
 	var <>contextDefaults = nil;

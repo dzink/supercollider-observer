@@ -16,25 +16,24 @@
  */
 DhService : DhPlugin {
 	var module;
-	// var members;
 	var functions;
 
 	*new {
-		arg module;
 		var s = super.new();
-		^ s.init(module);
+		^ s.init();
 	}
 
 	init {
-		arg aModule;
-		module = aModule;
 		// members = DhDependencyInjectionContainer();
+		super.init();
 		^ this;
 	}
 
 	registerFunction {
 		arg key, func = {};
-
+		// @TODO should this be only open functions?
+		functions[key] = func;
+		^ this;
 	}
 
 	/**
