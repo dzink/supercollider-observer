@@ -1,5 +1,5 @@
 DhModule : DhPlugin {
-	var <id;
+	var < id;
 	var < tree;
 	var < submodules;
 
