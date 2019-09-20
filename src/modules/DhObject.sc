@@ -3,6 +3,7 @@ DhObject {
 	var owner;
 	var id;
 	var <tree;
+	var root;
 
 	*new {
 		^ super.new().init();
@@ -82,6 +83,21 @@ DhObject {
 		arg select, depth = inf;
 		var trunks = tree.selectTrunks(select, depth);
 		^ DhTree.asSelves(trunks);
+	}
+
+	getRoot {
+		if (root.isNil) {
+			root = tree.getRoot.asSelf;
+		};
+		^ root;
+	}
+
+	/**
+	 * Reset the root for this and all parents.
+	 */
+	resetRoot {
+		root = nil;
+		^ this;
 	}
 
 	asTree {

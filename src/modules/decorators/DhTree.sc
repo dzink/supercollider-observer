@@ -2,7 +2,6 @@ DhTree {
 	var trunk;
 	var self;
 	var <branchList;
-	var <root;
 	var id;
 
 	classvar < c_SELECT_ADD = 1;
@@ -43,6 +42,10 @@ DhTree {
 
 	getTrunk {
 		^ trunk;
+	}
+
+	getRoot {
+		^ if (trunk.isNil) { this } { trunk.getRoot };
 	}
 
 	// Set heirarchy
@@ -134,34 +137,6 @@ DhTree {
 	}
 
 	/**
-	 * Keep getting trunks until you cannot trunk anymore.
-	 * Store the result, because this seems like a lot of work.
-	 */
-	getRoot {
-		if (root.isNil) {
-			var aRoot;
-			aRoot = this.getTrunks({
-				arg s;
-				if (s.tree.trunk.isNil) { true } { nil };
-			});
-			if (aRoot.size > 0) {
-				root = aRoot.values[0];
-			} {
-				root = nil;
-			};
-		};
-		^ root;
-	}
-
-	/**
-	 * Probably never need this but here it is.
-	 */
-	resetRoot {
-		root = nil;
-		^ this.getRoot();
-	}
-
-	/**
 	 * Recursively select from all ancestor trunks, based on a filter.
 	 */
 	prSelectTrunks {
@@ -174,12 +149,11 @@ DhTree {
 					list = list.add(trunk);
 				};
 				if (depth > 0) {
-					list = trunk.getTrunk(list, select, depth);
+					list = trunk.prSelectTrunks(list, select, depth);
 				};
 			};
+		};
 		^ list;
-		}
-
 	}
 
 	/**
