@@ -5,6 +5,7 @@ DhPlugin[] : DhObject {
 	// var < notifiers;
 	var < services;
 	var <> id;
+	var < cache;
 
 	*new {
 		^ super.new.init();
@@ -27,6 +28,13 @@ DhPlugin[] : DhObject {
 			service;
 		};
 		this.services[key]= serviceDic;
+
+		// Cache service is special, as it needs to be referenced directly to clear
+		// the cache's service location list.
+		if (key == \cache) {
+			cache = service;
+		};
+		cache.clear('service.*');
 		^ this;
 	}
 

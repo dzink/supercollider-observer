@@ -40,7 +40,27 @@ TestDhCache : TestDh {
 		this.assertEquals(c, nil, "Nil values are cached.");
 	}
 
+	test_clearAt {
+		cache.cacheAside(\a, { \aa });
+		cache.cacheAside(\b, { \bb });
+		cache.cacheAside(\ab, { \bb });
+		cache.cacheAside(\abc, { nil });
+		this.assertEquals(cache.size, 4, "Cache is full of objects.");
+		cache.clearAt(\b);
+		this.assertEquals(cache.size, 3, "Cache clears one object.");
+		cache.clearAt("?b*");
+		this.assertEquals(cache.size, 1, "Cache clears wildcard objects.");
+	}
 
+	test_clearAll {
+		cache.cacheAside(\a, { \aa });
+		cache.cacheAside(\b, { \bb });
+		cache.cacheAside(\ab, { \bb });
+		cache.cacheAside(\abc, { nil });
+		this.assertEquals(cache.size, 4, "Cache is full of objects.");
+		cache.clearAll();
+		this.assertEquals(cache.size, 0, "Cache clears all objects.");
+	}
 
 
 }

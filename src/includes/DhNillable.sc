@@ -20,7 +20,8 @@ DhNillable : DhAtom {
 
 	removeAt {
 		arg key;
-		validKeys[key] = false;
+		key = key.asSymbol;
+		validKeys.removeAt(key);
 		^ super.removeAt(key);
 	}
 
@@ -49,5 +50,9 @@ DhNillable : DhAtom {
 			arg key;
 			this[key];
 		});
+	}
+
+	size {
+		^ validKeys.size();
 	}
 }

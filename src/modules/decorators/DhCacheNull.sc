@@ -1,3 +1,6 @@
+/**
+ * A cache object that doesn't really cache anything.
+ */
 DhCacheNull : DhCache {
 	var <validKeys;
 
