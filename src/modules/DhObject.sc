@@ -13,15 +13,31 @@ DhObject {
 		^ this;
 	}
 
+	setId {
+		arg anId;
+		id = anId;
+		^ this;
+	}
+
+	id {
+		if (id.isNil) {
+			id = this.class.asString ++ "_" ++ this.hash.asString;
+		};
+		^ id;
+	}
+
 	storeConfig {
 		arg aConfig;
 		config = aConfig;
 		^ this;
 	}
 
-	setOwner {
-		arg anOwner;
-		^ this.branchFrom(anOwner);
+	/**
+	 * Sets the trunk.
+	 */
+	setTrunk {
+		arg trunk;
+		tree.setTrunk(trunk);
 	}
 
 	/**
@@ -34,51 +50,41 @@ DhObject {
 		^ this;
 	}
 
+	/**
+	 * Gets a list of this objects branch items.
+	 */
 	getBranches {
-		var branches = tree.branchList;
-		^ branches.collect({
-			arg self;
-			if (self.isNil) { nil } { [\self, self, self.getSelf(), self.getSelf().id].postln; self.getSelf() };
-		});
-	}
-
-	selectBranches {
-		arg select = nil, depth = 1;
-		var branches = tree.getBranches(select, depth);
-		^ branches.collect({
-			arg self;
-			if (self.isNil) { nil } { [\self, self, self.getSelf(), self.getSelf().id].postln; self.getSelf() };
-		});
-	}
-
-	getChildren {
-		arg select;
-		^ this.getBranches(select);
+		var branches = tree.getBranches;
+		^ DhTree.asSelves(branches);
 	}
 
 	/**
-	 * Sets the trunk.
+	 * Filter a list of this object's descendant branches.
 	 */
-	setTrunk {
-		arg trunk;
-		tree.setTrunk(trunk);
+	selectBranches {
+		arg select = nil, depth = inf;
+		var branches = tree.selectBranches(select, depth);
+		^ DhTree.asSelves(branches);
 	}
 
 	getTrunk {
-		var self = tree.getTrunk();
-		^ if (self.isNil) { nil } { self.getSelf() };
+		// [\self, this, this.id].postln;
+		^ DhTree.asSelf(tree.getTrunk());
 	}
 
-	setId {
-		arg anId;
-		id = anId;
-		^ this;
+	getTrunks {
+		arg depth = inf;
+		var trunks = tree.selectTrunks({true}, depth);
+		^ DhTree.asSelves(trunks);
 	}
 
-	id {
-		if (id.isNil) {
-			id = this.class.asString ++ "_" ++ this.hash.asString;
-		};
-		^ id;
+	selectTrunks {
+		arg select, depth = inf;
+		var trunks = tree.selectTrunks(select, depth);
+		^ DhTree.asSelves(trunks);
+	}
+
+	asTree {
+		^ tree;
 	}
 }
