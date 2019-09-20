@@ -1,6 +1,7 @@
 DhAbstractFactory {
-	var <>configs;
-	var <builtMembers;
+	var <> configs;
+	var < builtMembers;
+	var functionCache;
 
 	new {
 		arg configs;
@@ -11,6 +12,7 @@ DhAbstractFactory {
 		arg aConfigs;
 		configs = aConfigs;
 		builtMembers = List();
+		functionCache = DhCache();
 	}
 
 	build {

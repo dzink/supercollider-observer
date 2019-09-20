@@ -5,10 +5,10 @@ TestDhDependencyInjectionContainer : TestDh {
 	setUp {
 		d = DhDependencyInjectionContainer();
 		b = false;
-		d[\f] = {
+		d.putFunction(\f, {
 			b = true;
 			2;
-		};
+		});
 	}
 
 	tearDown {

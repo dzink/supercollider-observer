@@ -60,10 +60,52 @@ DhConfigAssembler {
 		paths.do {
 			arg path;
 			var config;
+			var basepath;
 			config = DhConfig.fromYamlFile(path);
+			basepath = path.dirname;
+			config[\configBasePath] = basepath;
+			config = this.processIncludes(config, basepath);
 			inProgressConfigs[config[\id]] = config;
 		};
 		^ inProgressConfigs;
+	}
+
+	processIncludes {
+		arg config, basePath = "/";
+		var includes = this.getIncludes(config);
+		includes.do {
+			arg key;
+			var includeConfig = DhConfig[];
+			var baseKey = key.asString;
+			baseKey = baseKey.keep(baseKey.size - 7);
+
+			// For each include, load the file, and use it as a default.
+			config[key].keysValuesDo {
+				arg configKey, path;
+				if (path.isKindOf(String)) {
+					if (path.beginsWith(".")) {
+						var loadedConfig;
+						path = basePath ++ "/" ++ path;
+						loadedConfig = path.load;
+						config[baseKey].default(loadedConfig);
+					};
+				};
+			};
+
+			// Don't forget to remove the include: object.
+			config.removeAt(key);
+		};
+		includes.postln;
+		^ config;
+	}
+
+	getIncludes {
+		arg config;
+		var includes = DhWildcard.wildcardMatchAll(config.fullKeys, "*.include");
+		if (config.includesKey(\include)) {
+			includes.add(\include);
+		};
+		^ includes;
 	}
 
 	/**

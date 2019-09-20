@@ -22,7 +22,7 @@ DhPlugin : DhObject {
 			// service.run(\serviceInit);
 			service;
 		};
-		services[key]= serviceDic;
+		services.putFunction(key, serviceDic);
 		this.addBranches(service);
 
 		// Cache service is special, as it needs to be referenced directly to clear
@@ -41,7 +41,7 @@ DhPlugin : DhObject {
 			observer;
 		};
 		// this.addBranches(observer);
-		this.observers[key]= observerDic;
+		this.observers.putFunction(key, observerDic);
 		^ this;
 	}
 
@@ -51,7 +51,7 @@ DhPlugin : DhObject {
 			// notifier.run(\notifierInit);
 			notifier;
 		};
-		this.notifiers[key]= notifierDic;
+		this.notifiers.putFunction(key, notifierDic);
 		^ this;
 	}
 

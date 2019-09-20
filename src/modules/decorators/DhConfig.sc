@@ -23,7 +23,6 @@ DhConfig : DhDependencyInjectionContainer {
 		arg baseKey = "", object = [], options = IdentityDictionary[];
 		object.keysValuesDo {
 			arg key, value;
-			var convertTypes = options[\convertTypes] ?? false;
 
 			// Convert arrays to dictionary with indices as keys.
 			if (value.isKindOf(Array)) {
@@ -32,7 +31,6 @@ DhConfig : DhDependencyInjectionContainer {
 			if (value.isKindOf(Dictionary)) {
 				this.prParseObject(baseKey ++ key ++ ".", value, options);
 			} {
-
 				this.put(baseKey ++ key, value);
 			};
 		};
@@ -45,14 +43,15 @@ DhConfig : DhDependencyInjectionContainer {
 			arg key;
 			var value = this.safeAt(key);
 			if (value.isKindOf(String)) {
-				this.put(key, this.prConvertStringType(value))
+				value = DhConfig.prConvertStringType(value);
+				this.put(key, value);
 			};
 		};
 	}
 
-	prConvertStringType {
+	*prConvertStringType {
 		arg value;
-		if ("^-*[\\d\\.]$".matchRegexp(value)) {
+		if ("^-*[\\d\\.]*$".matchRegexp(value)) {
 			^ value.asFloat;
 		};
 		if ("true".compare(value, true) == 0) {
@@ -67,7 +66,25 @@ DhConfig : DhDependencyInjectionContainer {
 		if ("null".compare(value, true) == 0) {
 			^ nil;
 		};
+		if (DhConfig.prStringIsFunction(value)) {
+			^ value.compile;
+		}
+
 		^ value;
+	}
+
+	*prStringIsFunction {
+		arg value;
+		if (value.beginsWith("{").not) {
+			^ false;
+		};
+		if (value.endsWith("}").not) {
+			^ false;
+		};
+		if (value.findAll("{").size != value.findAll("}").size) {
+			^ false;
+		};
+		^ true;
 	}
 
 	subConfig {
@@ -133,10 +150,11 @@ DhConfig : DhDependencyInjectionContainer {
 	default {
 		arg default;
 		var emptyKeys = this.prFindFreeDefaultKeys(default);
-
+		emptyKeys.postln;
 		emptyKeys.do {
 			arg key;
-			this[key] = default.safeAt(key);
+			this.put(key, default.safeAt(key));
+			[\put, key, default.safeAt(key).asCompileString, this.safeAt(key).asCompileString].postln;
 		};
 		^ this;
 	}
@@ -172,17 +190,6 @@ DhConfig : DhDependencyInjectionContainer {
 		^ false;
 	}
 
-	prDefault {
-		arg default, baseKey = "", myKeys = [];
-		this.keysValuesDo {
-			arg key, value;
-			var candidateKey = (baseKey ++ key).asSymbol;
-			if (myKeys.includes(candidateKey).not) {
-
-			}
-		}
-	}
-
 	toList {
 		var array = List[];
 		var keys = this.keys.asInteger.sort;
@@ -211,6 +218,7 @@ DhConfig : DhDependencyInjectionContainer {
 	put {
 		arg key, value;
 		var keyArray = this.splitAddress(key);
+		[\regput, key, value].postln;
 		this.prPut(keyArray, value);
 		^ this;
 	}
@@ -228,6 +236,12 @@ DhConfig : DhDependencyInjectionContainer {
 		arg keyArray, evaluate = true;
 		var key = keyArray.removeAt(0);
 		var value;
+
+		// // If an empty key is passed in, then return this.
+		if (key == "".asSymbol) {
+			^ this;
+		};
+
 		value = if (evaluate) { super.at(key) } { super.safeAt(key) };
 		if (keyArray.size == 0) {
 			^ value;
@@ -250,7 +264,7 @@ DhConfig : DhDependencyInjectionContainer {
 			subConfig = this.safeAt(key);
 			if (subConfig.isKindOf(DhConfig).not) {
 				subConfig = this.class.new();
-				super.put(key, subConfig);
+				this.put(key, subConfig);
 			};
 			subConfig.prPut(keyArray, value);
 		};
@@ -332,7 +346,7 @@ DhConfig : DhDependencyInjectionContainer {
 		var keys = this.topKeys;
 		^ keys.asArray.sortMap {
 			arg key;
-			var weight = this.determineWeight(this[key], property);
+			var weight = this.determineWeight(this.safeAt(key), property);
 			weight;
 		};
 	}

@@ -70,9 +70,9 @@ TestDhConfig : TestDh {
 
 	test_dic {
 		var value;
-		c[\f] = {
+		c.putFunction(\f, {
 			2;
-		};
+		});
 		this.assert(c.evaluatedAt(\f).not, "Function is not yet evaluated.");
 		value = c[\f];
 		this.assertEquals(value, 2, "Function is evaluated after being requested.");
