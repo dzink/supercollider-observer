@@ -100,6 +100,18 @@ TestDhTree : TestDh {
 			branch.id == \p;
 		}, 1);
 		this.assertEquals(select.size, 0, "Select stops after the first level.");
+
+		// Add one more trunk just to be sure it's stopping.
+		p.setTrunk(DhObject());
+
+		// get a single trunk by returning c_SELECT_RETURN;
+		select = c1.selectTrunkWhere({
+			arg branch;
+			branch.id == \p;
+		}, inf);
+		this.assertEquals(select.size, 1, "Select return only returns one trunk on return.");
+		this.assertEquals(select[0], p, "Select return returns the correct trunk.");
+
 	}
 
 	test_root {

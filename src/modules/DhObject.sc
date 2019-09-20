@@ -85,6 +85,22 @@ DhObject {
 		^ DhTree.asSelves(trunks);
 	}
 
+	/**
+	 * Only return the first trunk up the tree that returns true.
+	 */
+	selectTrunkWhere {
+		arg select, depth = inf;
+		var trunks;
+		var newselect = {
+			arg trunk;
+			if (select.value(trunk).asBoolean) { \return } { false };
+		};
+		trunks = tree.selectTrunks(newselect, depth);
+		^ DhTree.asSelves(trunks);
+	}
+
+
+
 	getRoot {
 		if (root.isNil) {
 			root = tree.getRoot.asSelf;

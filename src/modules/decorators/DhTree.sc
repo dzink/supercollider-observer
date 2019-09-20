@@ -7,7 +7,7 @@ DhTree {
 	classvar < c_SELECT_ADD = 1;
 	classvar < c_SELECT_DO_NOT_ADD = 2;
 	classvar < c_SELECT_END = 3;
-	classvar < c_SELECT_ADD_AND_END = 3;
+	classvar < c_SELECT_RETURN = 4;
 
 	*new {
 		arg self, id;
@@ -144,6 +144,9 @@ DhTree {
 		depth = depth - 1;
 		if (trunk.isNil.not and: { list.includes(trunk).not }) {
 			var selectCompare = DhTree.prSelectResult(trunk, select);
+			if (selectCompare == c_SELECT_RETURN) {
+				^ List().add(trunk);
+			};
 			if (selectCompare != c_SELECT_END) {
 				if (selectCompare == c_SELECT_ADD) {
 					list = list.add(trunk);
@@ -166,6 +169,9 @@ DhTree {
 			arg branch;
 			if (branch.isNil.not and: {list.includes(branch).not}) {
 				var selectCompare = DhTree.prSelectResult(branch, select);
+				if (selectCompare == c_SELECT_RETURN) {
+					^ List().add(branch);
+				};
 				if (selectCompare != c_SELECT_END) {
 					if (selectCompare == c_SELECT_ADD) {
 						list = list.add(branch);
@@ -193,6 +199,9 @@ DhTree {
 		result = (select.value(branch.getSelf()));
 		if (result == \end) {
 			^ c_SELECT_END;
+		};
+		if (result == \return) {
+			^ c_SELECT_RETURN;
 		};
 		if (result.isNil or: { result == false }) {
 			^ c_SELECT_DO_NOT_ADD;
