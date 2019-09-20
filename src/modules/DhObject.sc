@@ -2,8 +2,9 @@ DhObject {
 	var config;
 	var owner;
 	var id;
-	var <tree;
+	var < tree;
 	var root;
+	var < methods;
 
 	*new {
 		^ super.new().init();
@@ -22,7 +23,7 @@ DhObject {
 
 	id {
 		if (id.isNil) {
-			id = this.class.asString ++ "_" ++ this.hash.asString;
+			id = this.class.asString ++ "__" ++ this.hash.asString;
 		};
 		^ id;
 	}
@@ -69,7 +70,6 @@ DhObject {
 	}
 
 	getTrunk {
-		// [\self, this, this.id].postln;
 		^ DhTree.asSelf(tree.getTrunk());
 	}
 

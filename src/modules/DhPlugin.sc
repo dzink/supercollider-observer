@@ -1,10 +1,6 @@
-DhPlugin[] : DhObject {
-	var < methods;
+DhPlugin : DhObject {
 	var < data;
-	// var < observers;
-	// var < notifiers;
-	var < services;
-	var <> id;
+	var services;
 	var < cache;
 
 	*new {
@@ -12,22 +8,22 @@ DhPlugin[] : DhObject {
 	}
 
 	init {
+		super.init();
 		methods = DhAtom();
 		data = DhDependencyInjectionContainer();
 		config = DhConfig();
 		services = DhDependencyInjectionContainer();
-		// [\servicesInit, services].postln;
 		^ this;
 	}
 
 	addService {
-		arg service, key, memberConfig;
+		arg key, service, memberConfig;
 		var serviceDic = {
-			service.setOwner(this);
 			// service.run(\serviceInit);
 			service;
 		};
-		this.services[key]= serviceDic;
+		services[key]= serviceDic;
+		this.addBranches(service);
 
 		// Cache service is special, as it needs to be referenced directly to clear
 		// the cache's service location list.
@@ -39,20 +35,19 @@ DhPlugin[] : DhObject {
 	}
 
 	addObserver {
-		arg observer, key, memberConfig;
+		arg key, observer, memberConfig;
 		var observerDic = {
-			observer.setOwner(this);
 			// observer.run(\observerInit);
 			observer;
 		};
+		// this.addBranches(observer);
 		this.observers[key]= observerDic;
 		^ this;
 	}
 
 	addNotifier {
-		arg notifier, key, memberConfig;
+		arg key, notifier, memberConfig;
 		var notifierDic = {
-			notifier.setOwner(this);
 			// notifier.run(\notifierInit);
 			notifier;
 		};
@@ -96,16 +91,34 @@ DhPlugin[] : DhObject {
 	}
 
 	observers {
-		^ this.service(\observers);
+		^ this.getService(\observers);
 	}
 
 	notifiers {
-		^ this.service(\notifiers);
+		^ this.getService(\notifiers);
 	}
 
-	service {
+	getService {
 		arg key;
+		var trunks;
+		[\servicehunt, key, this.id];
 		// @TODO this should look up the tree as well.
-		^ services[key];
+		if (this.hasService(key)) {
+			^ services[key];
+		};
+		trunks = this.selectTrunkWhere({
+			arg trunk;
+			trunk.hasService(key);
+		});
+		if (trunks.size > 0) {
+			^trunks[0].getService(key);
+		};
+		("Service " ++ key ++ " not found on plugin " ++ this.id).error;
+		^ nil;
+	}
+
+	hasService {
+		arg key;
+		^ services.includesKey(key);
 	}
 }

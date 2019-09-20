@@ -15,12 +15,12 @@ TestDhAbstractFactory : TestDh {
 	}
 
 	test_factory {
-		var configs = a.assemble();
-		var root;
-		f.configs = configs;
-		root = f.build(configs[\test]);
-		f.builtMembers.do {
-			arg member;
-		};
+		// var configs = a.assemble();
+		// var root;
+		// f.configs = configs;
+		// root = f.build(configs[\test]);
+		// f.builtMembers.do {
+		// 	arg member;
+		// };
 	}
 }

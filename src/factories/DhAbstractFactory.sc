@@ -94,7 +94,7 @@ DhAbstractFactory {
 
 				memberConfig.default(DhConfig[\key -> key]);
 				member = this.buildMemberGroupMember(memberConfig, baseConfig);
-				m.perform(method, member, key, memberConfig);
+				m.perform(method, key, member, memberConfig);
 			};
 		};
 	}

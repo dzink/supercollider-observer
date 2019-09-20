@@ -24,7 +24,6 @@ DhService : DhPlugin {
 	}
 
 	init {
-		// members = DhDependencyInjectionContainer();
 		super.init();
 		^ this;
 	}
@@ -43,21 +42,5 @@ DhService : DhPlugin {
 		arg key ... args;
 		^ functions[key].value(module, this, *(args));
 	}
-
-	// registerMember {
-	// 	arg key, func;
-	//
-	// }
-	//
-	// at {
-	// 	arg key;
-	// 	^ members[key];
-	// }
-	//
-	// put {
-	// 	arg key, value;
-	// 	members[key] = value;
-	// 	^ this;
-	// }
 
 }

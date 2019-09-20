@@ -12,6 +12,15 @@ TestDhModule : TestDh {
 		p.free;
 	}
 
+	test_heirarchy {
+		p.addSubmodule(\m, m);
+
+		// We have to touch the submodule from its parent to have it init itself.
+		p.submodules[\m];
+		this.assert(p.getBranches.includes(m), "Parent contains submodule");
+		this.assertEquals(m.getTrunk, p, "Submodules knows its parent.");
+	}
+
 	// test_notifiers {
 	// 	var o;
 	// 	var animal = \bison;
