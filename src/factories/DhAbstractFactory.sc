@@ -17,15 +17,22 @@ DhAbstractFactory {
 		^ this;
 	}
 
-	build {
+	buildKindOf {
 		arg key;
+		var config = configs[key];
+		^ this.buildFromConfig(config);
+	}
+
+	buildFromConfig {
+		arg config;
 		var member;
-		var config = key;
+
 		member = this.buildClass(config);
 		this.buildBasics(member, config);
 		this.buildMemberTypes(member, config);
 		builtMembers = builtMembers.add(member);
 		^ member;
+
 	}
 
 	buildClass {
@@ -112,7 +119,7 @@ DhAbstractFactory {
 		var member;
 
 		memberConfig.default(baseConfig);
-		member = this.build(memberConfig);
+		member = this.buildFromConfig(memberConfig);
 		member.setConfig(memberConfig);
 		^ member;
 	}
