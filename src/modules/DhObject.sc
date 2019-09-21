@@ -170,5 +170,22 @@ DhObject {
 		^ nil;
 	}
 
+	log {
+		arg message, level = 10;
+		this.getService(\logger).log(message, level);
+		^ this;
+	}
+
+	warn {
+		arg message;
+		this.getService(\logger).warn(message);
+		^ this;
+	}
+
+	error {
+		arg message;
+		this.getService(\logger).error(message);
+		^ this;
+	}
 
 }
