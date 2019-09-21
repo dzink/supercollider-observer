@@ -13,7 +13,7 @@ DhDependencyInjectionContainer : DhNillable {
 	put {
 		arg key, func ... args;
 
-		// [\put, key, func.asCompileString, super].postln;
+
 		super.put(key, func);
 		^ this;
 	}
@@ -26,12 +26,6 @@ DhDependencyInjectionContainer : DhNillable {
 		super.put(key, func);
 		^ this;
 	}
-
-	// putFunction {
-	// 	arg key, func;
-	// 	super.put(key, func);
-	// 	^ this;
-	// }
 
 	putFactory {
 		arg key, func ... args;

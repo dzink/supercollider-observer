@@ -24,7 +24,7 @@ DhConfig : DhDependencyInjectionContainer {
 		object.keysValuesDo {
 			arg key, value;
 
-			// Convert arrays to dictionary with indices as keys.
+			// Convert arrays to DhConfig with indices as keys.
 			if (value.isKindOf(Array)) {
 				value = Dictionary.newFrom([(0..(value.size - 1)), value].lace);
 			};
@@ -150,11 +150,11 @@ DhConfig : DhDependencyInjectionContainer {
 	default {
 		arg default;
 		var emptyKeys = this.prFindFreeDefaultKeys(default);
-		emptyKeys.postln;
+
 		emptyKeys.do {
 			arg key;
 			this.put(key, default.safeAt(key));
-			[\put, key, default.safeAt(key).asCompileString, this.safeAt(key).asCompileString].postln;
+
 		};
 		^ this;
 	}
@@ -218,7 +218,7 @@ DhConfig : DhDependencyInjectionContainer {
 	put {
 		arg key, value;
 		var keyArray = this.splitAddress(key);
-		[\regput, key, value].postln;
+
 		this.prPut(keyArray, value);
 		^ this;
 	}
@@ -254,6 +254,32 @@ DhConfig : DhDependencyInjectionContainer {
 		};
 	}
 
+	removeAt {
+		arg key;
+		var keyArray = this.splitAddress(key);
+		this.prRemoveAt(keyArray);
+		^ this;
+	}
+
+	prRemoveAt {
+		arg keyArray;
+		if (keyArray.size == 1) {
+			var key = keyArray.removeAt(0);
+			super.removeAt(key);
+		} {
+			var key = keyArray.removeAt(0);
+			if (this.includesKey(key)) {
+				var object = this.safeAt(key);
+				if (object.isKindOf(DhConfig)) {
+					object.prRemoveAt(keyArray);
+					if (object.size == 0) {
+						super.removeAt(key);
+					};
+				};
+			}
+		};
+	}
+
 	prPut {
 		arg keyArray, value;
 		var key = keyArray.removeAt(0);
@@ -273,42 +299,6 @@ DhConfig : DhDependencyInjectionContainer {
 	includesKey {
 		arg key;
 		^ this.fullKeys.includes(key.asSymbol);
-	}
-
-	/**
-	 * Anything that is "base" or ends in ".base" is a requirement.
-	 */
-	getBases {
-		var topKeys = this.keys.select({
-			arg key;
-			(key.asSymbol == \base or: {
-				key.asString.endsWith(".base");
-			});
-		});
-		topKeys = topKeys.collect({
-			arg key;
-			[key, this[key].asSymbol];
-		});
-		^ DhAtom.newFrom(topKeys.flatten);
-	}
-
-	/**
-	 * Given a Dictionary of configs, place the defaults where this config has the
-	 * key *.base.
-	 */
-	addBaseDefaults {
-		arg configs;
-		this.getBases.keysValuesDo {
-			arg key, base;
-			if (key == \base) {
-				this.default(configs[base]);
-			} {
-
-				// Is this REALLY the best way to do a substring in sclang???
-				var configKey = key.asString.copyRange(0, key.asString.size -6);
-				this[configKey].default(configs[base]);
-			};
-		};
 	}
 
 	storeItemsOn { | stream |
@@ -350,4 +340,79 @@ DhConfig : DhDependencyInjectionContainer {
 			weight;
 		};
 	}
+
+
+	/**
+	 * Anything that is "base" or ends in ".base" is a requirement.
+	 */
+	getBaseKeys {
+		^ this.selectKeysEndingIn(\base);
+	}
+
+	/**
+	 * Given a Dictionary of configs, place the defaults where this config has the
+	 * key *.base.
+	 */
+	addBaseDefaults {
+		arg configs;
+		this.getBaseKeys.do {
+			arg key;
+			var base = this.safeAt(key);
+			var configKey = key.asString.copyRange(0, key.asString.size -6);
+			this[configKey].default(configs[base]);
+			this.removeAt(key);
+		};
+	}
+
+
+	applyIncludes {
+		var includeKeys = this.getIncludeKeys();
+		var basePath = this[\configBasePath] ?? "/";
+
+		// A list of the keys that end in *include, or include itself.
+		includeKeys.do {
+			arg key;
+			var config = this[key];
+			var baseKey = key.asString;
+			baseKey = baseKey.keep(baseKey.size - 7);
+
+			// A typical config item looks like [server -> ./include/server.sc].
+			config.keysValuesDo {
+				arg key, path;
+				if (path.isKindOf(String)) {
+					if (path.beginsWith(".")) {
+							path = basePath +/+ path;
+						};
+						this.include(baseKey, path);
+					};
+			};
+			this.removeAt(key);
+		};
+		^ this;
+	}
+
+
+	include {
+		arg baseKey, path;
+		var loadedConfig;
+		loadedConfig = path.load;
+		if (loadedConfig.isKindOf(DhConfig)) {
+			this[baseKey].default(loadedConfig);
+		};
+	}
+
+	getIncludeKeys {
+		^ this.selectKeysEndingIn(\include);
+	}
+
+	selectKeysEndingIn {
+		arg key;
+		var keys = DhWildcard.wildcardMatchAll(this.fullKeys, "*." ++ key);
+		if (this.includesKey(key)) {
+			keys.add(key);
+		};
+		^ keys;
+	}
+
+
 }

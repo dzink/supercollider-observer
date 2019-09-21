@@ -20,7 +20,10 @@ DhConfigAssembler {
 		inProgressConfigs = DhAtom();
 		paths = this.findConfigFiles(candidatePaths);
 		inProgressConfigs = this.loadConfigsPaths(inProgressConfigs, paths);
-		inProgressConfigs = this.addDependencyBases(inProgressConfigs);
+		order = this.resolveDependencyOrder(inProgressConfigs);
+		inProgressConfigs = this.applyIncludes(inProgressConfigs, order);
+		inProgressConfigs = this.addDependencyBases(inProgressConfigs, order);
+
 		configs = inProgressConfigs;
 		^ inProgressConfigs;
 	}
@@ -60,52 +63,21 @@ DhConfigAssembler {
 		paths.do {
 			arg path;
 			var config;
-			var basepath;
+			var basePath;
 			config = DhConfig.fromYamlFile(path);
-			basepath = path.dirname;
-			config[\configBasePath] = basepath;
-			config = this.processIncludes(config, basepath);
+			config[\configBasePath] = path.dirname;
 			inProgressConfigs[config[\id]] = config;
 		};
 		^ inProgressConfigs;
 	}
 
-	processIncludes {
-		arg config, basePath = "/";
-		var includes = this.getIncludes(config);
-		includes.do {
+	applyIncludes {
+		arg inProgressConfigs, order;
+		order.do {
 			arg key;
-			var includeConfig = DhConfig[];
-			var baseKey = key.asString;
-			baseKey = baseKey.keep(baseKey.size - 7);
-
-			// For each include, load the file, and use it as a default.
-			config[key].keysValuesDo {
-				arg configKey, path;
-				if (path.isKindOf(String)) {
-					if (path.beginsWith(".")) {
-						var loadedConfig;
-						path = basePath ++ "/" ++ path;
-						loadedConfig = path.load;
-						config[baseKey].default(loadedConfig);
-					};
-				};
-			};
-
-			// Don't forget to remove the include: object.
-			config.removeAt(key);
+			inProgressConfigs[key].applyIncludes();
 		};
-		includes.postln;
-		^ config;
-	}
-
-	getIncludes {
-		arg config;
-		var includes = DhWildcard.wildcardMatchAll(config.fullKeys, "*.include");
-		if (config.includesKey(\include)) {
-			includes.add(\include);
-		};
-		^ includes;
+		^ inProgressConfigs;
 	}
 
 	/**
@@ -114,8 +86,7 @@ DhConfigAssembler {
 	 * objects of the config with that base imported as defaults.
 	 */
 	addDependencyBases {
-		arg inProgressConfigs;
-		var order = this.resolveDependencyOrder(inProgressConfigs);
+		arg inProgressConfigs, order;
 		order.do {
 			arg config;
 			inProgressConfigs[config].addBaseDefaults(inProgressConfigs);
@@ -123,32 +94,49 @@ DhConfigAssembler {
 		^ inProgressConfigs;
 	}
 
+	/**
+	 * Return an array of configs in the order of which took the fewest iterations
+	 * to resolve bases.
+	 */
 	resolveDependencyOrder {
 		arg inProgressConfigs;
-		var edges = DhAtom();
-		var order = List[];
-		inProgressConfigs.keysValuesDo {
-			arg key, config;
-			edges[key] = config.getBases().values;
-		};
+		var edges = this.getDependencyEdges(inProgressConfigs);
+		var completed = List[];
+
 		while ({edges.size > 0}) {
 			var size = edges.size;
 			edges.keysValuesDo {
 				arg key, myEdges;
-				order.do {
+				completed.do {
 					arg requirement;
 					myEdges.remove(requirement);
 				};
 				if (myEdges.size == 0) {
 					edges.removeAt(key);
-					order.add(key);
+					completed.add(key);
 				};
 			};
+
+			// If the size is the same, you've got a circular graph.
 			if (edges.size == size) {
 				Exception("circular graph").throw;
 			};
 		};
-		^ order;
+		^ completed;
+	}
+
+	getDependencyEdges {
+		arg inProgressConfigs;
+		var edges = DhAtom();
+		inProgressConfigs.keysValuesDo {
+			arg key, config;
+			var bases = config.getBaseKeys();
+			edges[key] = bases.collect({
+				arg base;
+				config[base].asSymbol;
+			});
+		};
+		^ edges;
 	}
 
 	saveCompiled {

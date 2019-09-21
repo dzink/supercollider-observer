@@ -114,7 +114,28 @@ sub:
   base: base2
   cat: meow";
 		c = DhConfig.fromYaml(yaml);
-		this.assertEquals(c.getBases.at(\base), \base1, "Root base is found.");
-		this.assertEquals(c.getBases.at("sub.base"), \base2, "Sub base is found.");
+		this.assert(c.getBaseKeys.includes('base'), "Root base is found.");
+		this.assert(c.getBaseKeys.includes('sub.base'), "Sub base is found.");
+	}
+
+	test_remove {
+
+		// First level removal is trivial.
+		c.put("a.b.c.d", 1);
+		c.removeAt("a");
+		this.assert(c.includesKey("a.b.c.d").not, "The key is removed.");
+		this.assert(c.at("a.b.c.d").isNil, "The key is nil if it is tried to be accessed.");
+
+		// Deeper is not so easy.
+		c.put("a.b.c.d", 1);
+		c.removeAt("a.b.c.d");
+		this.assert(c.includesKey("a.b.c.d").not, "The key is removed.");
+		this.assert(c.at("a.b.c.d").isNil, "The key is nil if it is tried to be accessed.");
+
+		// Deeper is not so easy.
+		c.put("a.b.c.d", 1);
+		c.removeAt("a.b.c");
+		this.assert(c.includesKey("a.b.c.d").not, "The key is removed.");
+		this.assert(c.at("a.b.c.d").isNil, "The key is nil if it is tried to be accessed.");
 	}
 }

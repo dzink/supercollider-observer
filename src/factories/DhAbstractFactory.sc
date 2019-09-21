@@ -3,9 +3,10 @@ DhAbstractFactory {
 	var < builtMembers;
 	var functionCache;
 
-	new {
+	*new {
 		arg configs;
-		^ super.new.init(configs);
+		var f = super.new();
+		^ f.init(configs);
 	}
 
 	init {
@@ -13,11 +14,13 @@ DhAbstractFactory {
 		configs = aConfigs;
 		builtMembers = List();
 		functionCache = DhCache();
+		^ this;
 	}
 
 	build {
-		arg config;
+		arg key;
 		var member;
+		var config = key;
 		member = this.buildClass(config);
 		this.buildBasics(member, config);
 		this.buildMemberTypes(member, config);
@@ -44,8 +47,8 @@ DhAbstractFactory {
 				var sourceKey = propertyConfig[\sourceKey];
 				var method = propertyConfig[\targetMethod];
 				if (config.includesKey(sourceKey)) {
-					// var data = config[sourceKey];
-					// m.perform(method.asSymbol, data);
+					var data = config[sourceKey];
+					m.perform(method.asSymbol, data);
 				};
 			};
 		};
@@ -110,7 +113,7 @@ DhAbstractFactory {
 
 		memberConfig.default(baseConfig);
 		member = this.build(memberConfig);
-		member.storeConfig(memberConfig);
+		member.setConfig(memberConfig);
 		^ member;
 	}
 

@@ -55,6 +55,26 @@ DhPlugin : DhObject {
 		^ this;
 	}
 
+	addMethod {
+		arg key, func, config;
+		if (func.isClosed.not) {
+			"Function is not closed and cannot be compiled safely.".warn;
+		};
+		methods[key] = func;
+	}
+
+	addMethods {
+		arg methods;
+		methods.keysValuesDo {
+			arg key, func;
+			if (func.isKindOf(Function)) {
+				this.addMethod(key, func, methods);
+			} {
+				("AddMethod: " ++ func.asString ++ " is not a function").error;
+			};
+		};
+	}
+
 	at {
 		arg key;
 		^ data[key];
@@ -63,14 +83,6 @@ DhPlugin : DhObject {
 	put {
 		arg value, key;
 		^ data.put(value, key);
-	}
-
-	addMethod {
-		arg key, func;
-		if (func.isClosed.not) {
-			"Function is not closed and cannot be compiled safely.".warn;
-		};
-		methods[key] = func;
 	}
 
 	doesNotUnderstand {
@@ -121,4 +133,10 @@ DhPlugin : DhObject {
 		arg key;
 		^ services.includesKey(key);
 	}
+
+	configure {
+		super.configure();
+		^ this;
+	}
+
 }

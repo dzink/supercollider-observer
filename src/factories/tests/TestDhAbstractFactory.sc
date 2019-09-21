@@ -18,7 +18,8 @@ TestDhAbstractFactory : TestDh {
 		// var configs = a.assemble();
 		// var root;
 		// f.configs = configs;
-		// root = f.build(configs[\test]);
+		// f = DhAbstractFactory();
+		// root = f.build(\test);
 		// f.builtMembers.do {
 		// 	arg member;
 		// };

@@ -40,7 +40,5 @@ TestDhConfigAssembler : TestDh {
 		var configs = a.assemble();
 		this.assert(configs["test"].includesKey(\serviceInit), "Base include brought in config.");
 		this.assert(configs["test"].includesKey("services.meow.serviceInit"), "Child include brought in config.");
-		configs["test"].at("submodules.server.methods.serviceStart").value();//value();
-
 	}
 }

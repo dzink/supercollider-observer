@@ -1,5 +1,5 @@
 DhObject {
-	var config;
+	var < config;
 	var owner;
 	var id;
 	var < tree;
@@ -28,7 +28,7 @@ DhObject {
 		^ id;
 	}
 
-	storeConfig {
+	setConfig {
 		arg aConfig;
 		config = aConfig;
 		^ this;
@@ -118,5 +118,9 @@ DhObject {
 
 	asTree {
 		^ tree;
+	}
+
+	configure {
+		^ this;
 	}
 }
