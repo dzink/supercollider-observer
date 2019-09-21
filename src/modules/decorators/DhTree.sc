@@ -25,9 +25,15 @@ DhTree {
 
 	id {
 		if (id.isNil) {
-			id = this.class.asString ++ "_" ++ this.hash.asString;
+			id = this.getSelf.class.asString ++ "_" ++ this.hash.asString;
 		};
 		^ id;
+	}
+
+	setId {
+		arg anId;
+		id = anId;
+		^ this;
 	}
 
 	setSelf {

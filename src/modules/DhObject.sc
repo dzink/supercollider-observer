@@ -17,15 +17,26 @@ DhObject {
 
 	setId {
 		arg anId;
-		id = anId;
+		tree.setId(anId);
 		^ this;
 	}
 
 	id {
-		if (id.isNil) {
-			id = this.class.asString ++ "__" ++ this.hash.asString;
-		};
-		^ id;
+	 ^ tree.id;
+		// if (id.isNil) {
+		// 	id = this.class.asString ++ "__" ++ this.hash.asString;
+		// };
+		// ^ id;
+	}
+
+	address {
+		var trunks = this.getTrunks();
+		trunks = trunks.collect({
+			arg trunk;
+			trunk.id;
+		});
+		trunks = trunks.add(this.id);
+		^ trunks.join("/");
 	}
 
 	setConfig {
@@ -75,8 +86,7 @@ DhObject {
 
 	getTrunks {
 		arg depth = inf;
-		var trunks = tree.selectTrunks({true}, depth);
-		^ DhTree.asSelves(trunks);
+		^ this.selectTrunks({true}, depth);
 	}
 
 	selectTrunks {

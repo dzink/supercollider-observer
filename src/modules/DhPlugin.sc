@@ -88,14 +88,14 @@ DhPlugin : DhObject {
 	doesNotUnderstand {
 		arg method ... args;
 		if (methods.includesKey(method)) {
-			(this.class.asString ++ " does not respond to " ++ method ++ " but it has that method in its methods").warn;
+			// (this.class.asString ++ " " ++ this.address ++ " does not respond to " ++ method ++ " but it has that method in its methods").warn;
 			^ methods[method].value(this, *(args));
 		};
 		if (data.respondsTo(method)) {
 			^ data.perform(method, *(args));
 		};
 		// @TODO there should be a better error here.
-		(this.class.asString ++ " does not respond to " ++ method).error;
+		// (this.class.asString ++ " " ++ this.address ++ " does not respond to " ++ method).error;
 	}
 
 	defaultDataStore {

@@ -23,8 +23,8 @@ TestDhConfigAssembler : TestDh {
 
 	test_loadConfigs {
 		var configs = a.assemble();
-		this.assert(configs["core:service:server"].includesKey("serverOptions.sampleRate"), "Config imports sampleRate");
-		this.assert(configs["core:service:stereo_server"].includesKey("serverOptions.sampleRate"), "Stereo config imports sampleRate");
+		this.assert(configs["core.service.server"].includesKey("serverOptions.sampleRate"), "Config imports sampleRate");
+		this.assert(configs["core.service.stereoServer"].includesKey("serverOptions.sampleRate"), "Stereo config imports sampleRate");
 
 	}
 
