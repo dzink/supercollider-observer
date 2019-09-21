@@ -2,15 +2,12 @@ DhModule : DhPlugin {
 	var < submodules;
 
 	*new {
-		arg id;
 		var m = super.new();
-		m = m.init(id);
+		m = m.init();
 		^ m;
 	}
 
 	init {
-		arg i;
-		id = i;
 		super.init();
 		submodules = DhDependencyInjectionContainer();
 		^ this;

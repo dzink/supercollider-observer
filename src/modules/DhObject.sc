@@ -1,7 +1,7 @@
 DhObject {
 	var < config;
 	var owner;
-	var id;
+	// var id;
 	var < tree;
 	var root;
 	var < methods;

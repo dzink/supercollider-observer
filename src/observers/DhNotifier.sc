@@ -14,7 +14,8 @@ DhNotifier : DhObject {
 	}
 
 	init {
-
+		super.init();
+		^ this;
 	}
 
 	/**

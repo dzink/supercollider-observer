@@ -13,6 +13,7 @@ DhNotifierObserver : DhNotifier {
 	}
 
 	init {
+		super.init();
 		notifier = DhNotifier();
 		observer = DhObserver({
 			arg message;

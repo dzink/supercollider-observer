@@ -13,6 +13,7 @@ DhObserver : DhObject {
 
 	init {
 		arg func, filt;
+		super.init();
 		function = func;
 		^ this;
 	}
