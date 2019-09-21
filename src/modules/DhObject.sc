@@ -133,4 +133,28 @@ DhObject {
 	configure {
 		^ this;
 	}
+
+	getService {
+		arg key;
+		^ this.prInheritService(key);
+	}
+
+	prInheritService {
+		arg key;
+		var trunks;
+
+		// @TODO this should look up the tree as well.
+
+		trunks = this.selectTrunkWhere({
+			arg trunk;
+			trunk.hasService(key);
+		});
+		if (trunks.size > 0) {
+			^trunks[0].getService(key);
+		};
+		("Service " ++ key ++ " not found on plugin " ++ this.id).error;
+		^ nil;
+	}
+
+
 }

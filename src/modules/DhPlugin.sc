@@ -19,7 +19,7 @@ DhPlugin : DhObject {
 	addService {
 		arg key, service, memberConfig;
 		var serviceDic = {
-			// service.run(\serviceInit);
+			service.serviceInit(service);
 			service;
 		};
 		services.putFunction(key, serviceDic);
@@ -112,21 +112,10 @@ DhPlugin : DhObject {
 
 	getService {
 		arg key;
-		var trunks;
-		[\servicehunt, key, this.id];
-		// @TODO this should look up the tree as well.
 		if (this.hasService(key)) {
 			^ services[key];
 		};
-		trunks = this.selectTrunkWhere({
-			arg trunk;
-			trunk.hasService(key);
-		});
-		if (trunks.size > 0) {
-			^trunks[0].getService(key);
-		};
-		("Service " ++ key ++ " not found on plugin " ++ this.id).error;
-		^ nil;
+		^ this.prInheritService(key);
 	}
 
 	hasService {
