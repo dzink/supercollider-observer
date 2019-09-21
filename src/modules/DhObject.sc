@@ -31,7 +31,7 @@ DhObject {
 
 	address {
 		var trunks = this.getTrunks();
-		trunks = trunks.collect({
+		trunks = trunks.reverse.collect({
 			arg trunk;
 			trunk.id;
 		});
@@ -80,6 +80,18 @@ DhObject {
 		^ DhTree.asSelves(branches);
 	}
 
+	findBranchById {
+		arg id;
+		var branches = this.selectBranches({
+			arg branch;
+			branch.id.asSymbol == id.asSymbol;
+		}, 1);
+		if (branches.size > 0) {
+			^ branches.at(0);
+		};
+		^ nil;
+	}
+
 	getTrunk {
 		^ DhTree.asSelf(tree.getTrunk());
 	}
@@ -109,8 +121,6 @@ DhObject {
 		^ DhTree.asSelves(trunks);
 	}
 
-
-
 	getRoot {
 		if (root.isNil) {
 			root = tree.getRoot.asSelf;
@@ -137,6 +147,10 @@ DhObject {
 	getService {
 		arg key;
 		^ this.prInheritService(key);
+	}
+
+	hasService {
+		^ false;
 	}
 
 	prInheritService {
