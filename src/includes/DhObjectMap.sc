@@ -1,5 +1,5 @@
 DhObjectMap {
-	var addresses;
+	var routes;
 
 	*new {
 		^ super.new.init();
@@ -7,7 +7,7 @@ DhObjectMap {
 
 	init {
 		// cache = DhCache();
-		addresses = IdentityDictionary();
+		routes = IdentityDictionary();
 		// super.init();
 		^ this;
 	}
@@ -16,31 +16,31 @@ DhObjectMap {
 		arg route, startAt = nil;
 		if (startAt.isNil.not) {
 			var firstKeys, lastKeys;
-			route = startAt.getAddress().asString +/+ route;
+			route = startAt.getRoute().asString +/+ route;
 		};
-		^ addresses[route.asSymbol];
+		^ routes[route.asSymbol];
 	}
 
 	register {
 		arg object;
-		addresses[object.getAddress().asSymbol] = object;
+		routes[object.getRoute().asSymbol] = object;
 		^ this;
 	}
 
 	removeAt {
 		arg key;
-		addresses.removeAt(key.asSymbol);
+		routes.removeAt(key.asSymbol);
 		^ this;
 	}
 
 	includes {
 		arg key;
-		^ addresses.includes(key.asSymbol);
+		^ routes.includes(key.asSymbol);
 	}
 
 	list {
 		arg wildcard;
 		// @TODO use wildcard.
-		^ addresses.keys;
+		^ routes.keys;
 	}
 }

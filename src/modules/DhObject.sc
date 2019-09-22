@@ -5,8 +5,8 @@ DhObject {
 	var < tree;
 	var root;
 	var < methods;
-	var address;
-	var addressMap;
+	var route;
+	var routeMap;
 
 	*new {
 		^ super.new().init();
@@ -31,17 +31,17 @@ DhObject {
 		// ^ id;
 	}
 
-	getAddress {
-		if (address.isNil) {
+	getRoute {
+		if (route.isNil) {
 			var trunks = this.getTrunks();
 			trunks = trunks.reverse.collect({
 				arg trunk;
 				trunk.id;
 			});
 			trunks = trunks.add(this.id);
-			address = trunks.join("/").asSymbol;
+			route = trunks.join("/").asSymbol;
 		};
-		^ address;
+		^ route;
 	}
 
 	setConfig {
@@ -56,8 +56,8 @@ DhObject {
 	setTrunk {
 		arg trunk;
 		tree.setTrunk(trunk);
-		addressMap = trunk.getAddressMap();
-		addressMap.register(this);
+		routeMap = trunk.getRouteMap();
+		routeMap.register(this);
 		^ this;
 	}
 
@@ -70,8 +70,8 @@ DhObject {
 		tree.addBranches(objects);
 		objects.asArray.do {
 			arg object;
-			object.setAddressMap(this.getAddressMap());
-			addressMap.register(object);
+			object.setRouteMap(this.getRouteMap());
+			routeMap.register(object);
 		};
 		^ this;
 	}
@@ -201,37 +201,52 @@ DhObject {
 		^ this;
 	}
 
-	getAddressMap {
-		if (addressMap.isNil) {
+	getRouteMap {
+		if (routeMap.isNil) {
 			if (this.getTrunk().isNil) {
-				addressMap = DhObjectMap();
-				addressMap.register(this);
+				routeMap = DhObjectMap();
+				routeMap.register(this);
 			} {
-				^ this.root(addressMap);
+				^ this.root(routeMap);
 			};
 		};
-		^ addressMap;
+		^ routeMap;
 	}
 
-	setAddressMap {
+	setRouteMap {
 		arg map;
-		addressMap = map;
+		routeMap = map;
 		^ this;
 	}
 
-	findByAddress {
+	findByRoute {
 		arg route;
-		^ this.getAddressMap.find(route);
+		^ this.getRouteMap.find(route);
 	}
 
-	findByAddressFrom {
+	findByRouteFrom {
 		arg route, startAt;
-		^ this.getAddressMap.find(route, startAt);
+		^ this.getRouteMap.find(route, startAt);
 	}
 
 	free {
-		this.getAddressMap.removeAt(this.getAddress());
+		this.getRouteMap.removeAt(this.getRoute());
 		^ super.free();
+	}
+
+	/**
+	 * Clear the cached map and routeMap. Next time they are accessed, they will
+	 * be regenerated.
+	 */
+	remap {
+		this.getRouteMap().removeAt(this.getRoute());
+		route = nil;
+		routeMap = nil;
+		this.getBranches().do {
+			arg branch;
+			branch.remap();
+		};
+		^ this;
 	}
 
 }
