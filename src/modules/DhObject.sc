@@ -5,6 +5,8 @@ DhObject {
 	var < tree;
 	var root;
 	var < methods;
+	var address;
+	var addressMap;
 
 	*new {
 		^ super.new().init();
@@ -29,14 +31,17 @@ DhObject {
 		// ^ id;
 	}
 
-	address {
-		var trunks = this.getTrunks();
-		trunks = trunks.reverse.collect({
-			arg trunk;
-			trunk.id;
-		});
-		trunks = trunks.add(this.id);
-		^ trunks.join("/");
+	getAddress {
+		if (address.isNil) {
+			var trunks = this.getTrunks();
+			trunks = trunks.reverse.collect({
+				arg trunk;
+				trunk.id;
+			});
+			trunks = trunks.add(this.id);
+			address = trunks.join("/").asSymbol;
+		};
+		^ address;
 	}
 
 	setConfig {
@@ -51,6 +56,9 @@ DhObject {
 	setTrunk {
 		arg trunk;
 		tree.setTrunk(trunk);
+		addressMap = trunk.getAddressMap();
+		addressMap.register(this);
+		^ this;
 	}
 
 	/**
@@ -60,6 +68,11 @@ DhObject {
 	addBranches {
 		arg ... objects;
 		tree.addBranches(objects);
+		objects.asArray.do {
+			arg object;
+			object.setAddressMap(this.getAddressMap());
+			addressMap.register(object);
+		};
 		^ this;
 	}
 
@@ -186,6 +199,39 @@ DhObject {
 		arg message;
 		this.getService(\logger).error(message);
 		^ this;
+	}
+
+	getAddressMap {
+		if (addressMap.isNil) {
+			if (this.getTrunk().isNil) {
+				addressMap = DhObjectMap();
+				addressMap.register(this);
+			} {
+				^ this.root(addressMap);
+			};
+		};
+		^ addressMap;
+	}
+
+	setAddressMap {
+		arg map;
+		addressMap = map;
+		^ this;
+	}
+
+	findByAddress {
+		arg route;
+		^ this.getAddressMap.find(route);
+	}
+
+	findByAddressFrom {
+		arg route, startAt;
+		^ this.getAddressMap.find(route, startAt);
+	}
+
+	free {
+		this.getAddressMap.removeAt(this.getAddress());
+		^ super.free();
 	}
 
 }
