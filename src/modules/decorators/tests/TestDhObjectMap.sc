@@ -23,6 +23,19 @@ TestDhObjectMap : TestDh {
 		var map = l4.getService(\map);
 		this.assertEquals(l4.address, "l1/l2/l4", "Address is generated correctly");
 		this.assertEquals(map.matchRoute("l1/l2/l4"), l4, "Address is followed correctly");
+		this.assertEquals(map.matchRoute("l2/l4", l2), l4, "Sub-Address is followed correctly");
 		// map.drawTree;
 	}
+
+	test_idemp {
+		var map = l4.getService(\map);
+		this.assertEquals(l4, map.matchRoute(l4.address), "Idempotency check.")
+	}
+
+	test_shortcut {
+		// var map = l4.getService(\map);
+		this.assertEquals(l4, l4.router.matchRoute(l4.address), "Router shortcut check.")
+	}
+
+
 }
