@@ -3,7 +3,6 @@ TestDhScheduler : TestDh {
 	test_block {
 		var s = DhScheduler();
 		var n = true;
-		s.maxThreads.postln;
 		s.block();
 		fork {
 			s.block();

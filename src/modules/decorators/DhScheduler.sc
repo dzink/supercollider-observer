@@ -55,7 +55,6 @@ DhScheduler {
 		timesFired = timesFired + 1;
 		activeThreads = activeThreads + 1;
 		queuedThreads = queuedThreads + 1;
-		// semaphore.wait();
 		this.waitUntil({this.shouldRun})
 		^ this;
 	}
@@ -89,14 +88,9 @@ DhScheduler {
 	 */
 	waitUntil {
 		arg func, interval = 0.2;
-
-		// [\testing, func.value()].postln;
 		while ({func.value() != true}) {
-			// [\waiting, func.value()].postln;
 			interval.wait;
 		};
-		// [\complete, func.value()].postln;
-
 		^ this;
 	}
 

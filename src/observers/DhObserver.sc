@@ -1,9 +1,10 @@
 DhObserver : DhObject {
 
-	var <>function = nil;
-	var <>filter = nil;
-	var <>weight = 0;
-	var <>async = false;
+	var <> function = nil;
+	var <> filter = nil;
+	var <> weight = 0;
+	var <> async = false;
+	var < maxThreads = nil;
 
 	*new {
 		arg function = {}, filter = nil;
@@ -22,13 +23,12 @@ DhObserver : DhObject {
 	 * Receives a notification and runs the function.
 	 */
 	respond {
-		arg message;
-		var result;
+		arg message, scheduler;
+		var result = nil;
 		if (filter.isNil or: {filter.match(message.context)}) {
 			result = function.value(message);
-			^ result;
 		};
-		^ nil;
+		^ result;
 	}
 
 	observe {
@@ -43,6 +43,6 @@ DhObserver : DhObject {
 			comp = comp.weight;
 		};
 		^ this.weight < comp;
-	}
+  }
 
 }

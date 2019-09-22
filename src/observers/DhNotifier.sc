@@ -4,8 +4,9 @@
  */
 DhNotifier : DhObject {
 	var id = 0;
-	var <observers = nil;
-	var <>contextDefaults = nil;
+	var < observers = nil;
+	var <> contextDefaults = nil;
+	var cache;
 
 	*new {
 		arg contextDefaults = nil;
@@ -15,6 +16,7 @@ DhNotifier : DhObject {
 
 	init {
 		super.init();
+		cache = DhCache();
 		^ this;
 	}
 
@@ -23,51 +25,36 @@ DhNotifier : DhObject {
 	 */
 	notify {
 		arg message;
-		observers.do {
+		var results = DhResponse();
+		var scheduler = DhScheduler();
+		results.scheduler = scheduler;
+		observers.sort.do {
 			arg observer;
-			var resolver = DhAsyncResolver();
-			var increment = observer.async.not().asInteger();
-			resolver.increment(increment);
-			fork {
-				observer.respond(message);
-				resolver.decrement(increment);
-			};
-			resolver.wait;
+			var result;
+			scheduler.block();
+			result = observer.respond(message, scheduler);
+			results[observer.getRoute()] = result;
+			scheduler.unblock();
 		};
-		^ this;
+		^ results;
 	}
 
-	/**
-	 * Observe all notifications async. Obviously, observer weight does nothing.
-	 */
 	notifyAsync {
 		arg message;
-		var c = 0;
-		var resolver = DhAsyncResolver();
-		observers.do {
+		var results = DhResponse();
+		var scheduler = DhScheduler();
+		results.scheduler = scheduler;
+		observers.sort.do {
 			arg observer;
-			var increment;
-
-			// Don't increment/decrement on async observers.
-			increment = observer.async.not().asInteger();
-			resolver.increment(increment);
+			var result;
+			scheduler.registerThread();
 			fork {
-				observer.respond(message);
-				resolver.decrement(increment);
-			};
+				result = observer.respond(message, scheduler);
+				results[observer.getRoute()] = result;
+				scheduler.deregisterThread();
+			}
 		};
-		^ resolver;
-	}
-
-	/**
-	 * Observe all notifications async, but wait for them to resolve before
-	 * continuing. Observer weight does nothing.
-	 */
-	notifyResolve {
-		arg message;
-		var resolver = this.notifyAsync(message);
-		resolver.wait();
-		^ resolver;
+		^ results;
 	}
 
 	addObserver {
@@ -78,5 +65,6 @@ DhNotifier : DhObject {
 		observers.add(observer);
 		^ this;
 	}
+
 
 }

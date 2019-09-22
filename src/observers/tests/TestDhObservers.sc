@@ -23,7 +23,23 @@ TestDhObservers : TestDh {
 		};
 		o.observe(n);
 		n.notify();
-		this.assertEquals(animal, \dog, "Observer responds to empty nofification");
+		this.wait({ animal == \dog }, "Observer responds to empty nofification");
+	}
+
+	test_notifyAsync {
+		var animal = \cat;
+		var response;
+		o.function = {
+			0.1.wait;
+			animal = \dog;
+		};
+		o.observe(n);
+		response = n.notifyAsync();
+		this.assert(animal == \cat, "Async notifications are not finished yet.");
+		this.assert(response.values.includes(\dog).not, "The response is not built yet.");
+		response.resolve();
+		this.assert(animal == \dog, "Async notifications ");
+		this.assert(response.values.includes(\dog), "The response now includes a dog.");
 	}
 
 	test_emptyObserverFunction {
@@ -31,8 +47,9 @@ TestDhObservers : TestDh {
 		n.notify();
 		this.assert(true, "Empty observer function does not crash");
 	}
-
+	//
 	test_weightedObserver {
+		var results;
 		var animals = List[];
 		o.function = {
 			animals.add(\dog);
@@ -46,15 +63,15 @@ TestDhObservers : TestDh {
 		o.weight = -10;
 		o2.weight = 10;
 		n.observers.sort;
-		n.notify;
-		this.assertEquals(animals[0], \dog, "Observer initially sorts dog first");
-		this.assertEquals(animals[1], \cat, "Observer initially sorts cat second");
+		results = n.notify();
+		this.assert(animals[0] == \dog, "Observer initially sorts dog first");
+		this.assert(animals[1] == \cat, "Observer initially sorts cat second");
 
 		// Reverse the weights, re-sort.
 		o.weight = 10;
 		o2.weight = -10;
 		n.observers.sort;
-		n.notify;
+		n.notify();
 		this.assertEquals(animals[2], \cat, "Observer after resort sorts cat first");
 		this.assertEquals(animals[3], \dog, "Observer after resort sorts dog second");
 	}
@@ -77,6 +94,7 @@ TestDhObservers : TestDh {
 		this.assert(animals.includesAll(List[\lion, \tiger]), "Duplex responds to n");
 
 		// Clearing the list and testing the first notifier.
+		animals.clear();
 		n2.notify();
 		this.assert(animals.includesAll(List[\lion, \tiger]), "Duplex responds to n2");
 	}
@@ -92,7 +110,6 @@ TestDhObservers : TestDh {
 		n.notify(m);
 		this.assertEquals(result, "meow", "Observer passes message.");
 	}
-
 
 	test_notificationFilter {
 		var nf = DhContext[
@@ -112,7 +129,7 @@ TestDhObservers : TestDh {
 		n.notify(m);
 		this.assertEquals(result, "meow", "Observer passes message thru filter.");
 	}
-
+	//
 	test_notificationFilterFail {
 		var nf = DhContext[
 			\cat -> \meow,
@@ -130,41 +147,6 @@ TestDhObservers : TestDh {
 		o.filter = of;
 		n.notify(m);
 		this.assertEquals(result, nil, "Observer filters unmatching message.");
-	}
-
-	test_notifyResolve {
-		var animal = \cat;
-		o.function = {
-			0.5.wait;
-			animal = \dog;
-		};
-		o.observe(n);
-		n.notifyResolve();
-		this.assertEquals(animal, \dog, "Observer waits for sync nofification");
-	}
-
-	test_notifyAsync {
-		var animal = \cat;
-		o.function = {
-			0.5.wait;
-			animal = \dog;
-		};
-		o.observe(n);
-		n.notifyAsync();
-		this.assertEquals(animal, \cat, "Async Observer has not finished yet");
-		this.wait({animal == \dog}, "Async Observer is now complete", 3);
-	}
-
-	test_notifyAsyncObserver {
-		var animal = \cat;
-		o.function = {
-			animal = \dog;
-		};
-		o.observe(n);
-		o.async = true;
-		n.notify();
-		this.assertEquals(animal, \cat, "We shouldn't wait for an async observer");
-		this.wait({animal == \dog}, "Async Observer is now complete", 3);
 	}
 
 }

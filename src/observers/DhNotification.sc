@@ -1,6 +1,6 @@
-DhNotification : DhActivatable{
-	var <message = nil;
-	var <context = nil;
+DhNotification {
+	var < message = nil;
+	var < context = nil;
 
 	*new {
 		arg message = nil, context = nil;
@@ -13,6 +13,12 @@ DhNotification : DhActivatable{
 		message = mess;
 		context = cont;
 		^ this;
+	}
+
+	addContext {
+		arg aContext;
+		//context
+		// @TODO
 	}
 
 }
