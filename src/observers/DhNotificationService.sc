@@ -5,11 +5,22 @@
  */
 
 DhNotificationService : DhService {
-	var <notifiers;
+	var < notifiers;
 
-	registerNotifier {
+	*new {
+		^ super.new.init();
+	}
+
+	init {
+		super.init();
+		notifiers = DhDependencyInjectionContainer();
+		^ this;
+	}
+
+	addNotifier {
 		arg key, notifier;
-		this.put(key, notifier);
+		notifiers.put(key, notifier);
+		notifier.setTrunk(this);
 	}
 
 	at {
@@ -25,6 +36,6 @@ DhNotificationService : DhService {
 
 	notify {
 		arg key, message;
-		notifiers[key].respond(message);
+		notifiers[key].notify(message);
 	}
 }

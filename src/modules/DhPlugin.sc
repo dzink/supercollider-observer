@@ -2,6 +2,7 @@ DhPlugin : DhObject {
 	var < data;
 	var services;
 	var < cache;
+	var < observers;
 
 	*new {
 		^ super.new.init();
@@ -13,6 +14,7 @@ DhPlugin : DhObject {
 		data = DhDependencyInjectionContainer();
 		config = DhConfig();
 		services = DhDependencyInjectionContainer();
+		observers = DhDependencyInjectionContainer();
 		^ this;
 	}
 
@@ -40,7 +42,7 @@ DhPlugin : DhObject {
 			// observer.run(\observerInit);
 			observer;
 		};
-		// this.addBranches(observer);
+		this.addBranches(observer);
 		this.observers.putFunction(key, observerDic);
 		^ this;
 	}
@@ -51,7 +53,9 @@ DhPlugin : DhObject {
 			// notifier.run(\notifierInit);
 			notifier;
 		};
-		this.notifiers.putFunction(key, notifierDic);
+		notifier.setTrunk(this.getService('notifiers'));
+		// this.addBranches(notifier);
+		this.notifiers[key] = notifier;
 		^ this;
 	}
 
@@ -102,9 +106,9 @@ DhPlugin : DhObject {
 		^ data;
 	}
 
-	observers {
-		^ this.getService(\observers);
-	}
+	// observers {
+	// 	^ this.getService(\observers);
+	// }
 
 	notifiers {
 		^ this.getService(\notifiers);

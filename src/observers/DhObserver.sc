@@ -1,6 +1,6 @@
 DhObserver : DhObject {
 
-	var <> function = nil;
+	var < function = nil;
 	var <> filter = nil;
 	var <> weight = 0;
 	var <> async = false;
@@ -34,6 +34,15 @@ DhObserver : DhObject {
 	observe {
 		arg notifier;
 		notifier.addObserver(this);
+		^ this;
+	}
+
+	function_ {
+		arg aFunction;
+		if (aFunction.isKindOf(Function).not) {
+			aFunction = { aFunction };
+		};
+		function = aFunction;
 		^ this;
 	}
 
