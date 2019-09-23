@@ -10,18 +10,24 @@ DhCache : DhNillable {
 		^ this[key];
 	}
 
-	clearAt {
+	clear {
 		arg key;
-		key = key.asString;
-		if (key.contains("*")) {
-			DhWildcard.wildcardMatchAll(this.keys, key).do {
-				arg removeKey;
-				this.removeAt(removeKey);
-			};
-			^ this;
+		key = key.asSymbol();
+		if (this.includesKey(key)) {
+			this.removeAt(key);
+			^ 1;
 		};
-		this.removeAt(key);
-		^ this;
+		^ 0;
+	}
+
+	clearWildcard {
+		arg key;
+		var matches = DhWildcard.wildcardMatchAll(this.keys, key);
+		matches.do {
+			arg removeKey;
+			this.removeAt(removeKey);
+		};
+		^ matches.size;
 	}
 
 	clearAll {
