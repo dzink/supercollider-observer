@@ -37,6 +37,10 @@ DhDependencyInjectionContainerObject {
 		};
 	}
 
+	/**
+	 * Take the existing function, and wrap it in another function to extend
+	 * its behavior.
+	 */
 	extend {
 		arg newFunction;
 		var lastFunc = func;

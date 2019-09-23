@@ -15,13 +15,16 @@ DhDependencyInjectionContainer : DhNillable {
 	}
 
 	put {
-		arg key, func ... args;
+		arg key, func;
 		super.put(key, func);
 		^ this;
 	}
 
+	/**
+	 * Put a function into the DIC.
+	 */
 	putFunction {
-		arg key, func ... args;
+		arg key, func;
 		if (func.isKindOf(Function)) {
 			func = DhDependencyInjectionContainerObject.fromFunction(func, args);
 		};
@@ -29,6 +32,10 @@ DhDependencyInjectionContainer : DhNillable {
 		^ this;
 	}
 
+	/**
+	 * Put a function into the DIC, but mark it so that it is reevaluated each
+	 * time.
+	 */
 	putFactory {
 		arg key, func ... args;
 		this.put(key, func, *(args));

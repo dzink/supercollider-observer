@@ -1,3 +1,8 @@
+/**
+ * Base class for many utilities, also usable as a slightly fuller featured
+ * IdentityDictionary.
+ * Mostly this is useful for sorting items by weight.
+ */
 DhAtom : IdentityDictionary {
 
 	at {

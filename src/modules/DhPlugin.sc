@@ -24,6 +24,13 @@ DhPlugin : DhObject {
 			service.serviceInit(service);
 			service;
 		};
+
+		// Add object to tree
+		// Add object to Dic
+		// Add object to context
+
+		// Run object configuration
+
 		services.putFunction(key, serviceDic);
 		this.addBranches(service);
 
