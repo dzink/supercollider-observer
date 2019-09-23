@@ -19,32 +19,25 @@ DhObjectMap {
 			var firstKeys, lastKeys;
 			route = startAt.getRoute().asString +/+ route;
 		};
-		if ({ (object = routes[route.asSymbol]).isNil.not }) {
+		object = routes[route.asSymbol];
+		if (object.isNil.not) {
 			^ object;
 		};
-		// var a = "a/b/c/d/e/../../../meow/../mix".split($/).collect({ arg d; d.asSymbol}).asList;
-
-var i;
-while ({ (i = a.indexOf('..')).isNil.not }) {
-	i.postln;
-	a.removeAt(i);
-	a.removeAt(i - 1);
-
-};
+		^ nil;
 	}
 
 	traceParents {
-		arg route;
-		var routeArray = route.split($/).collect({ arg d; d.asSymbol}).asList;
-		var newroute;
-		var i;
-		while ({ (i = routeArray.indexOf('..')).isNil.not }) {
-			i.postln;
-			routeArray.removeAt(i);
-			routeArray.removeAt(i - 1);
-		};
-		newRoute = routeArray.join($/);
-		if (newRoute.)
+		// arg route;
+		// var routeArray = route.split($/).collect({ arg d; d.asSymbol}).asList;
+		// var newroute;
+		// var i;
+		// while ({ (i = routeArray.indexOf('..')).isNil.not }) {
+		// 	i.postln;
+		// 	routeArray.removeAt(i);
+		// 	routeArray.removeAt(i - 1);
+		// };
+		// newRoute = routeArray.join($/);
+		// if (newRoute.)
 	}
 
 	register {

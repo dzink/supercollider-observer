@@ -46,9 +46,9 @@ TestDhCache : TestDh {
 		cache.cacheAside(\ab, { \bb });
 		cache.cacheAside(\abc, { nil });
 		this.assertEquals(cache.size, 4, "Cache is full of objects.");
-		cache.clearAt(\b);
+		cache.clear(\b);
 		this.assertEquals(cache.size, 3, "Cache clears one object.");
-		cache.clearAt("?b*");
+		cache.clearWildcard("?b*");
 		this.assertEquals(cache.size, 1, "Cache clears wildcard objects.");
 	}
 
