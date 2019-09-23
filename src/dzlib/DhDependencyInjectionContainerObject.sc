@@ -2,6 +2,8 @@ DhDependencyInjectionContainerObject {
 	var < func;
 	var <> isFactory = false;
 	var extend;
+	var < value;
+	var < evaluated = false;
 
 	*fromFunction{
 		arg func;
@@ -17,11 +19,13 @@ DhDependencyInjectionContainerObject {
 
 	evaluate {
 		arg container, args = nil;
-		if (args.isNil) {
-			^ func.value(container);
+		value = if (args.isNil) {
+			func.value(container);
 		} {
-			^ func.value(container, args);
+			func.value(container, args);
 		};
+		evaluated = true;
+		^ value;
 	}
 
 	evaluateAFunc {

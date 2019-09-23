@@ -12,8 +12,6 @@ DhDependencyInjectionContainer : DhNillable {
 
 	put {
 		arg key, func ... args;
-
-
 		super.put(key, func);
 		^ this;
 	}
@@ -48,6 +46,14 @@ DhDependencyInjectionContainer : DhNillable {
 	}
 
 	safeAt {
+		arg key;
+		^ super.at(key);
+	}
+
+	/**
+	 * Returns the object without evaluating it.
+	 */
+	protectAt {
 		arg key;
 		^ super.at(key);
 	}
