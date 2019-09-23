@@ -58,6 +58,11 @@ DhDependencyInjectionContainer : DhNillable {
 		^ o.isKindOf(DhDependencyInjectionContainerObject).not;
 	}
 
+	extend {
+	 arg key, function;
+	 this.safeAt(key).extend(function);
+	}
+
 	objects {
 		^ this;
 	}

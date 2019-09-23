@@ -1,24 +1,50 @@
 DhDependencyInjectionContainerObject {
-	var <func;
-	var <args;
-	var <>isFactory = false;
+	var < func;
+	var <> isFactory = false;
+	var extend;
 
 	*fromFunction{
-		arg func, args;
+		arg func;
 		var d = super.new();
-		^ d.init(func, args);
+		^ d.init(func);
 	}
 
 	init {
-		arg aFunc, aArgs;
+		arg aFunc;
 		func = aFunc;
-		args = aArgs;
 		^ this;
 	}
 
 	evaluate {
-		arg container;
-		var v = func.value(container, *(args));
-		^ v;
+		arg container, args = nil;
+		if (args.isNil) {
+			^ func.value(container);
+		} {
+			^ func.value(container, args);
+		};
+	}
+
+	evaluateAFunc {
+		arg container, args = nil;
+		if (args.isNil) {
+			^ func.value(container);
+		} {
+			^ func.value(container, args);
+		};
+	}
+
+	extend {
+		arg newFunction;
+		var lastFunc = func;
+		func = {
+			arg container, args;
+			var v = if (args.isNil) {
+				newFunction.value(lastFunc.value(container), container);
+			} {
+				newFunction.value(lastFunc.value(container, args), container, args);
+			};
+			v;
+		};
+		^ this;
 	}
 }
