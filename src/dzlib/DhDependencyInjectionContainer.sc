@@ -1,3 +1,7 @@
+/**
+ * Caches either objects, or the instructions on how to create them.
+ * This is helpful for making sure that not
+ */
 DhDependencyInjectionContainer : DhNillable {
 
 	*new {

@@ -19,6 +19,9 @@ DhConfig : DhDependencyInjectionContainer {
 		// ^ DhConfig.fromObject(object);
 	}
 
+	/**
+	 * Converts an object into a DhConfig.
+	 */
 	prParseObject {
 		arg baseKey = "", object = [], options = IdentityDictionary[];
 		object.keysValuesDo {
@@ -37,6 +40,9 @@ DhConfig : DhDependencyInjectionContainer {
 		^ this;
 	}
 
+	/**
+	 * Converts scalar values based on *prConvertStringType.
+	 */
 	convertTypes {
 		var keys = this.keys;
 		keys.do {
@@ -87,6 +93,9 @@ DhConfig : DhDependencyInjectionContainer {
 		^ true;
 	}
 
+	/**
+	 * Returns a portion of this config, starting at key.
+	 */
 	subConfig {
 		arg key;
 		var subConfig = DhConfig();
@@ -126,6 +135,9 @@ DhConfig : DhDependencyInjectionContainer {
 		^ this.prKeys(keys, "", true);
 	}
 
+	/**
+	 * Traverses objects, assembling a list of keys.
+	 */
 	prKeys {
 		arg keys, baseKey = "", fullKeys = false;
 		this.topKeys.do {
@@ -203,18 +215,28 @@ DhConfig : DhDependencyInjectionContainer {
 		^ array.asArray();
 	}
 
+	/**
+	 * Given a string like a.b.c, return the config at that address.
+	 */
 	at {
 		arg key;
 		var keyArray = this.splitAddress(key);
 		^ this.prAt(keyArray, true);
 	}
 
+	/**
+	 * Given a string like a.b.c, return the config at that address. Do not
+	 * evaluate.
+	 */
 	safeAt {
 		arg key;
 		var keyArray = this.splitAddress(key);
 		^ this.prAt(keyArray, false);
 	}
 
+	/**
+	 * Given a string like a.b.c, return the config at that address.
+	 */
 	put {
 		arg key, value;
 		var keyArray = this.splitAddress(key);
@@ -223,6 +245,10 @@ DhConfig : DhDependencyInjectionContainer {
 		^ this;
 	}
 
+	/**
+ 	 * Given a string like a.b.c, separate it into its component addresses in an
+	 * array.
+ 	 */
 	splitAddress {
 		arg key;
 		var keyArray = key.asString.split($.);
@@ -301,6 +327,9 @@ DhConfig : DhDependencyInjectionContainer {
 		^ this.fullKeys.includes(key.asSymbol);
 	}
 
+	/**
+	 * Get valid compile strings with all the evaluation.
+	 */
 	storeItemsOn { | stream |
 		var addComma = false;
 		var keys = this.keys;
@@ -341,7 +370,6 @@ DhConfig : DhDependencyInjectionContainer {
 		};
 	}
 
-
 	/**
 	 * Anything that is "base" or ends in ".base" is a requirement.
 	 */
@@ -363,7 +391,6 @@ DhConfig : DhDependencyInjectionContainer {
 			this.removeAt(key);
 		};
 	}
-
 
 	applyIncludes {
 		var includeKeys = this.getIncludeKeys();
