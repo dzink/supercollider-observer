@@ -4,7 +4,7 @@
  * Registers Glo
  */
 
-DhNotificationService : DhService {
+DhNotificationService[] : DhService {
 	var < notifiers;
 
 	*new {
@@ -30,8 +30,7 @@ DhNotificationService : DhService {
 
 	put {
 		arg key, value;
-		notifiers.put(key, value);
-		^ this;
+		^ this.addNotifier(key, value);
 	}
 
 	notify {

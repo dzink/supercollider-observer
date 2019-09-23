@@ -15,6 +15,7 @@ TestDhNotificationService : TestDh {
 		var n1 = DhNotifier().setId(\n1);
 		var n2 = DhNotifierObserver().setId(\n2);
 		var o = DhObserver().setId(\o);
+		var n3;
 
 		s.setTrunk(p);
 		// s.registerNotifier(\n1, n1);
@@ -44,6 +45,12 @@ TestDhNotificationService : TestDh {
 		animal = \cat;
 		s.notify(\n2);
 		this.assertEquals(animal, \dog, "The notifier service runs the observer.");
+
+		n3 = DhNotifier().setId(\n3).setTrunk(p);
+		s[\n2].observe(s.findByRoute('p/n3'));
+		animal = \cat;
+		n3.notify();
+		this.assertEquals(animal, \dog, "The notifier service passes through to observers.");
 	}
 
 }
