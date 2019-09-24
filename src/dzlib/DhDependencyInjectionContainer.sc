@@ -26,7 +26,7 @@ DhDependencyInjectionContainer : DhNillable {
 	putFunction {
 		arg key, func;
 		if (func.isKindOf(Function)) {
-			func = DhDependencyInjectionContainerObject.fromFunction(func, args);
+			func = DhDependencyInjectionContainerObject.fromFunction(func);
 		};
 		super.put(key, func);
 		^ this;
@@ -37,8 +37,8 @@ DhDependencyInjectionContainer : DhNillable {
 	 * time.
 	 */
 	putFactory {
-		arg key, func ... args;
-		this.put(key, func, *(args));
+		arg key, func;
+		this.put(key, func);
 		func.isFactory = true;
 		^ this;
 	}
