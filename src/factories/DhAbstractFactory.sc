@@ -2,6 +2,8 @@ DhAbstractFactory {
 	var <> configs;
 	var < builtMembers;
 	var functionCache;
+	var dic;
+	var addressMap;
 
 	*new {
 		arg configs;
@@ -14,9 +16,22 @@ DhAbstractFactory {
 		configs = aConfigs;
 		builtMembers = List();
 		functionCache = DhCache();
+		addressMap = DhObjectMap();
+		dic = DhDependencyInjectionContainer();
+		^ this;
+	}
+	
+	setAddressMap {
+		arg anotherAddressMap;
+		addressMap = anotherAddressMap;
 		^ this;
 	}
 
+	setDic {
+		arg anotherDic;
+		dic = anotherDic;
+		^ this;
+	}
 	buildKindOf {
 		arg key;
 		var config = configs[key];
@@ -28,11 +43,11 @@ DhAbstractFactory {
 		var member;
 
 		member = this.buildClass(config);
+		member.setDic(dic).setAddressMap(addressMap);
 		this.buildBasics(member, config);
 		this.buildMemberTypes(member, config);
 		builtMembers = builtMembers.add(member);
 		^ member;
-
 	}
 
 	buildClass {

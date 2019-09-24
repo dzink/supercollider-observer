@@ -7,6 +7,7 @@ DhObject {
 	var < methods;
 	var address;
 	var addressMap;
+	var < dic;
 
 	*new {
 		^ super.new().init();
@@ -24,24 +25,48 @@ DhObject {
 	}
 
 	id {
-	 ^ tree.id;
-		// if (id.isNil) {
-		// 	id = this.class.asString ++ "__" ++ this.hash.asString;
-		// };
-		// ^ id;
+		if (tree.id.isNil) {
+			tree.setId = this.class.asString ++ "__" ++ this.hash.asString;
+		};
+		^ tree.id;
 	}
 
 	getAddress {
 		if (address.isNil) {
-			var trunks = this.getTrunks();
-			trunks = trunks.reverse.collect({
-				arg trunk;
-				trunk.id;
-			});
-			trunks = trunks.add(this.id);
-			address = trunks.join("/").asSymbol;
+			var trunk = this.getTrunk();
+			var trunkAddress;
+			if (trunk.isNil) {
+				^ this.id;
+			};
+			trunkAddress = trunk.getAddress().asString;
+			address = (trunkAddress +/+ this.id).asSymbol;
 		};
 		^ address;
+	}
+
+	addressMap {
+		if (addressMap.isNil) {
+			if (this.getTrunk.isNil.not) {
+				addressMap = this.getTrunk.addressMap;
+			} {
+				addressMap = DhObjectMap();
+				addressMap.register(this);
+			};
+		};
+		^ addressMap;
+		// Did I call address instead of addressMap anywhere?
+	}
+
+	setAddressMap {
+		arg anotherAddressMap;
+		addressMap = anotherAddressMap;
+		^ this;
+	}
+
+	setDic {
+		arg anotherDic;
+		dic = anotherDic;
+		^ this;
 	}
 
 	setConfig {
@@ -56,8 +81,8 @@ DhObject {
 	setTrunk {
 		arg trunk;
 		tree.setTrunk(trunk);
-		addressMap = trunk.getAddressMap();
-		addressMap.register(this);
+		addressMap = trunk.addressMap();
+		this.addressMap.register(this);
 		^ this;
 	}
 
@@ -70,8 +95,8 @@ DhObject {
 		tree.addBranches(objects);
 		objects.asArray.do {
 			arg object;
-			object.setAddressMap(this.getAddressMap());
-			addressMap.register(object);
+			object.setAddressMap(this.addressMap());
+			this.addressMap.register(object);
 		};
 		^ this;
 	}
@@ -201,36 +226,8 @@ DhObject {
 		^ this;
 	}
 
-	getAddressMap {
-		if (addressMap.isNil) {
-			if (this.getTrunk().isNil) {
-				addressMap = DhObjectMap();
-				addressMap.register(this);
-			} {
-				^ this.root(addressMap);
-			};
-		};
-		^ addressMap;
-	}
-
-	setAddressMap {
-		arg map;
-		addressMap = map;
-		^ this;
-	}
-
-	findByAddress {
-		arg address;
-		^ this.getAddressMap.find(address);
-	}
-
-	findByAddressFrom {
-		arg address, startAt;
-		^ this.getAddressMap.find(address, startAt);
-	}
-
 	free {
-		this.getAddressMap.removeAt(this.getAddress());
+		this.addressMap.removeAt(this.getAddress());
 		^ super.free();
 	}
 
@@ -239,7 +236,7 @@ DhObject {
 	 * be regenerated.
 	 */
 	remap {
-		this.getAddressMap().removeAt(this.getAddress());
+		this.addressMap().removeAt(this.getAddress());
 		address = nil;
 		addressMap = nil;
 		this.getBranches().do {

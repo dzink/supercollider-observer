@@ -18,18 +18,19 @@ TestDhObjectMap : TestDh {
 
 	test_address {
 		// var map = l4.getService(\map);
+		l4.addressMap.list.postln;
 		this.assertEquals(l4.getAddress(), 'l1/l2/l4', "Address is generated correctly");
-		this.assert(l4.getAddressMap().isNil.not, "Address Map is generated.");
-		this.assertEquals(l2.getAddressMap(), l1.getAddressMap(), "Address Map is shared between objects.");
-		this.assert(l2.getAddressMap().list.includes(\l1), "Address Map stores addresses.");
-		this.assertEquals(l2.findByAddress(\l1), l1, "And the addresses correctly point to the root member.");
-		this.assertEquals(l2.findByAddress('l1/l2/l4'), l4, "And the addresses correctly point to a sub member.");
-		this.assertEquals(l2.findByAddress("l1/l2/l4"), l4, "Strings work also.");
-		this.assertEquals(l2.findByAddress(l4.getAddress()), l4, "Idempotency check.");
-		this.assertEquals(l4.findByAddressFrom("l4", l2), l4, "Addressr shortcut check.");
+		this.assert(l4.addressMap().isNil.not, "Address Map is generated.");
+		this.assertEquals(l2.addressMap(), l1.addressMap(), "Address Map is shared between objects.");
+		this.assert(l2.addressMap().list.includes(\l1), "Address Map stores addresses.");
+		this.assertEquals(l2.addressMap.find(\l1), l1, "And the addresses correctly point to the root member.");
+		this.assertEquals(l2.addressMap.find('l1/l2/l4'), l4, "And the addresses correctly point to a sub member.");
+		this.assertEquals(l2.addressMap.find("l1/l2/l4"), l4, "Strings work also.");
+		this.assertEquals(l2.addressMap.find(l4.getAddress()), l4, "Idempotency check.");
+		this.assertEquals(l4.addressMap.find("l4", l2), l4, "Addressr shortcut check.");
 
 		// Check this last
 		l4.free;
-		this.assertEquals(l2.findByAddress('l1/l2/l4'), nil, "Freed objects are no longer in the map.");
+		this.assertEquals(l2.addressMap.find('l1/l2/l4'), nil, "Freed objects are no longer in the map.");
 	}
 }
