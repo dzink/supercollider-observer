@@ -25,29 +25,29 @@ TestDhNotificationService : TestDh {
 		s.addNotifier(\n2, n2);
 		p.addObserver(\o, o);
 
-		this.assertEquals(p.findByRoute('p/notifiers/n1'), s[\n1], "N1 is added to the router and service.");
-		this.assertEquals(p.findByRoute('p/notifiers/n2'), s[\n2], "N2 is added to the router and service.");
+		this.assertEquals(p.findByAddress('p/notifiers/n1'), s[\n1], "N1 is added to the addressr and service.");
+		this.assertEquals(p.findByAddress('p/notifiers/n2'), s[\n2], "N2 is added to the addressr and service.");
 
 		s.notifiers.postcs;
 
 		o.function = {
 			animal = \dog;
 		};
-		o.getRouteMap.list.postcs;
-		o.observe(o.findByRoute('p/notifiers/n1'));
+		o.getAddressMap.list.postcs;
+		o.observe(o.findByAddress('p/notifiers/n1'));
 
 		this.assertEquals(animal, \cat, "Animal starts as a cat.");
 		animal = \cat;
 		n1.notify();
 		this.assertEquals(animal, \dog, "The notifier runs the observer.");
 
-		o.observe(o.findByRoute('p/notifiers/n2'));
+		o.observe(o.findByAddress('p/notifiers/n2'));
 		animal = \cat;
 		s.notify(\n2);
 		this.assertEquals(animal, \dog, "The notifier service runs the observer.");
 
 		n3 = DhNotifier().setId(\n3).setTrunk(p);
-		s[\n2].observe(s.findByRoute('p/n3'));
+		s[\n2].observe(s.findByAddress('p/n3'));
 		animal = \cat;
 		n3.notify();
 		this.assertEquals(animal, \dog, "The notifier service passes through to observers.");

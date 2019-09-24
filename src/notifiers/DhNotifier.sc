@@ -33,7 +33,7 @@ DhNotifier : DhObject {
 			var result;
 			scheduler.block();
 			result = observer.respond(message, scheduler);
-			results[observer.getRoute()] = result;
+			results[observer.getAddress()] = result;
 			scheduler.unblock();
 		};
 		^ results;
@@ -50,7 +50,7 @@ DhNotifier : DhObject {
 			scheduler.registerThread();
 			fork {
 				result = observer.respond(message, scheduler);
-				results[observer.getRoute()] = result;
+				results[observer.getAddress()] = result;
 				scheduler.deregisterThread();
 			}
 		};

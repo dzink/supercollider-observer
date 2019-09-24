@@ -5,8 +5,8 @@ DhObject {
 	var < tree;
 	var root;
 	var < methods;
-	var route;
-	var routeMap;
+	var address;
+	var addressMap;
 
 	*new {
 		^ super.new().init();
@@ -31,17 +31,17 @@ DhObject {
 		// ^ id;
 	}
 
-	getRoute {
-		if (route.isNil) {
+	getAddress {
+		if (address.isNil) {
 			var trunks = this.getTrunks();
 			trunks = trunks.reverse.collect({
 				arg trunk;
 				trunk.id;
 			});
 			trunks = trunks.add(this.id);
-			route = trunks.join("/").asSymbol;
+			address = trunks.join("/").asSymbol;
 		};
-		^ route;
+		^ address;
 	}
 
 	setConfig {
@@ -56,8 +56,8 @@ DhObject {
 	setTrunk {
 		arg trunk;
 		tree.setTrunk(trunk);
-		routeMap = trunk.getRouteMap();
-		routeMap.register(this);
+		addressMap = trunk.getAddressMap();
+		addressMap.register(this);
 		^ this;
 	}
 
@@ -70,8 +70,8 @@ DhObject {
 		tree.addBranches(objects);
 		objects.asArray.do {
 			arg object;
-			object.setRouteMap(this.getRouteMap());
-			routeMap.register(object);
+			object.setAddressMap(this.getAddressMap());
+			addressMap.register(object);
 		};
 		^ this;
 	}
@@ -201,47 +201,47 @@ DhObject {
 		^ this;
 	}
 
-	getRouteMap {
-		if (routeMap.isNil) {
+	getAddressMap {
+		if (addressMap.isNil) {
 			if (this.getTrunk().isNil) {
-				routeMap = DhObjectMap();
-				routeMap.register(this);
+				addressMap = DhObjectMap();
+				addressMap.register(this);
 			} {
-				^ this.root(routeMap);
+				^ this.root(addressMap);
 			};
 		};
-		^ routeMap;
+		^ addressMap;
 	}
 
-	setRouteMap {
+	setAddressMap {
 		arg map;
-		routeMap = map;
+		addressMap = map;
 		^ this;
 	}
 
-	findByRoute {
-		arg route;
-		^ this.getRouteMap.find(route);
+	findByAddress {
+		arg address;
+		^ this.getAddressMap.find(address);
 	}
 
-	findByRouteFrom {
-		arg route, startAt;
-		^ this.getRouteMap.find(route, startAt);
+	findByAddressFrom {
+		arg address, startAt;
+		^ this.getAddressMap.find(address, startAt);
 	}
 
 	free {
-		this.getRouteMap.removeAt(this.getRoute());
+		this.getAddressMap.removeAt(this.getAddress());
 		^ super.free();
 	}
 
 	/**
-	 * Clear the cached map and routeMap. Next time they are accessed, they will
+	 * Clear the cached map and addressMap. Next time they are accessed, they will
 	 * be regenerated.
 	 */
 	remap {
-		this.getRouteMap().removeAt(this.getRoute());
-		route = nil;
-		routeMap = nil;
+		this.getAddressMap().removeAt(this.getAddress());
+		address = nil;
+		addressMap = nil;
 		this.getBranches().do {
 			arg branch;
 			branch.remap();

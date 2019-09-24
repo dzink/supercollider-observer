@@ -1,5 +1,5 @@
 DhObjectMap {
-	var routes;
+	var addresses;
 
 	*new {
 		^ super.new.init();
@@ -7,19 +7,19 @@ DhObjectMap {
 
 	init {
 		// cache = DhCache();
-		routes = IdentityDictionary();
+		addresses = IdentityDictionary();
 		// super.init();
 		^ this;
 	}
 
 	find {
-		arg route, startAt = nil;
+		arg address, startAt = nil;
 		var object;
 		if (startAt.isNil.not) {
 			var firstKeys, lastKeys;
-			route = startAt.getRoute().asString +/+ route;
+			address = startAt.getAddress().asString +/+ address;
 		};
-		object = routes[route.asSymbol];
+		object = addresses[address.asSymbol];
 		if (object.isNil.not) {
 			^ object;
 		};
@@ -27,39 +27,39 @@ DhObjectMap {
 	}
 
 	traceParents {
-		// arg route;
-		// var routeArray = route.split($/).collect({ arg d; d.asSymbol}).asList;
-		// var newroute;
+		// arg address;
+		// var addressArray = address.split($/).collect({ arg d; d.asSymbol}).asList;
+		// var newaddress;
 		// var i;
-		// while ({ (i = routeArray.indexOf('..')).isNil.not }) {
+		// while ({ (i = addressArray.indexOf('..')).isNil.not }) {
 		// 	i.postln;
-		// 	routeArray.removeAt(i);
-		// 	routeArray.removeAt(i - 1);
+		// 	addressArray.removeAt(i);
+		// 	addressArray.removeAt(i - 1);
 		// };
-		// newRoute = routeArray.join($/);
-		// if (newRoute.)
+		// newAddress = addressArray.join($/);
+		// if (newAddress.)
 	}
 
 	register {
 		arg object;
-		routes[object.getRoute().asSymbol] = object;
+		addresses[object.getAddress().asSymbol] = object;
 		^ this;
 	}
 
 	removeAt {
 		arg key;
-		routes.removeAt(key.asSymbol);
+		addresses.removeAt(key.asSymbol);
 		^ this;
 	}
 
 	includes {
 		arg key;
-		^ routes.includes(key.asSymbol);
+		^ addresses.includes(key.asSymbol);
 	}
 
 	list {
 		arg wildcard;
 		// @TODO use wildcard.
-		^ routes.keys;
+		^ addresses.keys;
 	}
 }
