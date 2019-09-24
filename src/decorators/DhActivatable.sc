@@ -14,5 +14,4 @@ DhActivatable {
 		arg newTime;
 		// @TODO
 	}
-
 }
