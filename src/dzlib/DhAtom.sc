@@ -42,7 +42,7 @@ DhAtom : IdentityDictionary {
 			^ (object[property] ?? 0);
 		} {
 			if (object.respondsTo(property.asSymbol)) {
-				^ (object.process(property.asSymbol) ?? 0);
+				^ (object.perform(property.asSymbol) ?? 0);
 			} {
 			^	0;
 			};

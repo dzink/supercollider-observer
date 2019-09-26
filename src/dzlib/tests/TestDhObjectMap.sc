@@ -27,7 +27,7 @@ TestDhObjectMap : TestDh {
 		this.assertEquals(l2.addressMap.find('l1/l2/l4'), l4, "And the addresses correctly point to a sub member.");
 		this.assertEquals(l2.addressMap.find("l1/l2/l4"), l4, "Strings work also.");
 		this.assertEquals(l2.addressMap.find(l4.getAddress()), l4, "Idempotency check.");
-		this.assertEquals(l4.addressMap.find("l4", l2), l4, "Addressr shortcut check.");
+		this.assertEquals(l4.addressMap.find("./l4", l2), l4, "Address shortcut check.");
 
 		// Check this last
 		l4.free;

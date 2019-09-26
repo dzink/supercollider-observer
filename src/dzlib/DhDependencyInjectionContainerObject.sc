@@ -12,7 +12,7 @@ DhDependencyInjectionContainerObject {
 	}
 
 	init {
-		arg aFunc;
+		arg aFunc = nil;
 		func = aFunc;
 		^ this;
 	}
@@ -44,14 +44,22 @@ DhDependencyInjectionContainerObject {
 	extend {
 		arg newFunction;
 		var lastFunc = func;
-		func = {
-			arg container, args;
-			var v = if (args.isNil) {
-				newFunction.value(lastFunc.value(container), container);
-			} {
-				newFunction.value(lastFunc.value(container, args), container, args);
+
+		if (func.isNil) {
+			func = newFunction;
+		} {
+
+			// wrap the old function in the new one. Args needs to stay unset if that
+			// is how it came.
+			func = {
+				arg container, args;
+				var v = if (args.isNil) {
+					newFunction.value(lastFunc.value(container), container);
+				} {
+					newFunction.value(lastFunc.value(container, args), container, args);
+				};
+				v;
 			};
-			v;
 		};
 		^ this;
 	}

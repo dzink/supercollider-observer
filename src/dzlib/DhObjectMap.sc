@@ -15,9 +15,11 @@ DhObjectMap {
 	find {
 		arg address, startAt = nil;
 		var object;
-		if (startAt.isNil.not) {
+		var addressString = address.asString;
+		if (addressString.beginsWith("./")) {
 			var firstKeys, lastKeys;
-			address = startAt.getAddress().asString +/+ address;
+			addressString = addressString.copyRange(2, addressString.size);
+			address = startAt.getAddress().asString +/+ addressString;
 		};
 		object = addresses[address.asSymbol];
 		if (object.isNil.not) {

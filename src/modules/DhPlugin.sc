@@ -134,9 +134,10 @@ DhPlugin : DhObject {
 		^ services.includesKey(key);
 	}
 
-	configure {
-		super.configure();
-		^ this;
-	}
+	// configure {
+	// 	super.configure();
+	// 	this.(configure);
+	// 	^ this;
+	// }
 
 }

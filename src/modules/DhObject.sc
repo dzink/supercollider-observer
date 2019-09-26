@@ -1,5 +1,6 @@
 DhObject {
 	var < config;
+	var <> buildConfig;
 	var owner;
 	// var id;
 	var < tree;
@@ -8,6 +9,7 @@ DhObject {
 	var address;
 	var addressMap;
 	var < dic;
+	var <> weight;
 
 	*new {
 		^ super.new().init();

@@ -20,7 +20,7 @@ DhAbstractFactory {
 		dic = DhDependencyInjectionContainer();
 		^ this;
 	}
-	
+
 	setAddressMap {
 		arg anotherAddressMap;
 		addressMap = anotherAddressMap;
@@ -120,7 +120,7 @@ DhAbstractFactory {
 				};
 
 				memberConfig.default(DhConfig[\key -> key]);
-				member = this.buildMemberGroupMember(memberConfig, baseConfig);
+				member = this.buildMemberGroupMember(memberConfig, baseConfig, buildConfig);
 				m.perform(method, key, member, memberConfig);
 			};
 		};
@@ -130,12 +130,13 @@ DhAbstractFactory {
 	 * Build each member. Add a base config for defaults for each.
 	 */
 	buildMemberGroupMember {
-		arg memberConfig, baseConfig;
+		arg memberConfig, baseConfig, buildConfig;
 		var member;
 
 		memberConfig.default(baseConfig);
 		member = this.buildFromConfig(memberConfig);
 		member.setConfig(memberConfig);
+		member.buildConfig_(buildConfig);
 		^ member;
 	}
 

@@ -105,8 +105,10 @@ DhConfigAssembler {
 
 		while ({edges.size > 0}) {
 			var size = edges.size;
+			"-----".postcs;
 			edges.keysValuesDo {
 				arg key, myEdges;
+				[\edge, key, myEdges].postcs;
 				completed.do {
 					arg requirement;
 					myEdges.remove(requirement);
@@ -119,6 +121,15 @@ DhConfigAssembler {
 
 			// If the size is the same, you've got a circular graph.
 			if (edges.size == size) {
+				edges.keysValuesDo {
+					arg key, unresolvedEdges;
+					unresolvedEdges.do {
+						arg unresolvedEdge;
+						if (edges.includes(unresolvedEdge).not) {
+							Exception("Graph is missing config for " ++ unresolvedEdge);
+						};
+					}
+				};
 				Exception("circular graph").throw;
 			};
 		};
@@ -131,7 +142,7 @@ DhConfigAssembler {
 		inProgressConfigs.keysValuesDo {
 			arg key, config;
 			var bases = config.getBaseKeys();
-			edges[key] = bases.collect({
+			edges[key] = bases.asSet.collect({
 				arg base;
 				config[base].asSymbol;
 			});
