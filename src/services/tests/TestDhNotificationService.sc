@@ -28,12 +28,9 @@ TestDhNotificationService : TestDh {
 		this.assertEquals(p.addressMap.find('p/notifiers/n1'), s[\n1], "N1 is added to the addressr and service.");
 		this.assertEquals(p.addressMap.find('p/notifiers/n2'), s[\n2], "N2 is added to the addressr and service.");
 
-		s.notifiers.postcs;
-
 		o.function = {
 			animal = \dog;
 		};
-		o.addressMap.list.postcs;
 		o.observe(o.addressMap.find('p/notifiers/n1'));
 
 		this.assertEquals(animal, \cat, "Animal starts as a cat.");

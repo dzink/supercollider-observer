@@ -105,10 +105,8 @@ DhConfigAssembler {
 
 		while ({edges.size > 0}) {
 			var size = edges.size;
-			"-----".postcs;
 			edges.keysValuesDo {
 				arg key, myEdges;
-				[\edge, key, myEdges].postcs;
 				completed.do {
 					arg requirement;
 					myEdges.remove(requirement);

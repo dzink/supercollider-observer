@@ -17,8 +17,6 @@ TestDhObjectMap : TestDh {
 	}
 
 	test_address {
-		// var map = l4.getService(\map);
-		l4.addressMap.list.postln;
 		this.assertEquals(l4.getAddress(), 'l1/l2/l4', "Address is generated correctly");
 		this.assert(l4.addressMap().isNil.not, "Address Map is generated.");
 		this.assertEquals(l2.addressMap(), l1.addressMap(), "Address Map is shared between objects.");

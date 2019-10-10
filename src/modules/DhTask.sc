@@ -9,7 +9,6 @@ DhTask : DhObject {
 	init {
 		super.init;
 		function = DhDependencyInjectionContainerObject(nil);
-		\makingTask.postln;
 		^ this;
 	}
 
@@ -22,17 +21,29 @@ DhTask : DhObject {
 		if (notifier.isNil.not) {
 			function = DhDependencyInjectionContainerObject.fromFunction({
 				arg t;
-				[\func, t.getAddress, t.addressMap.find(notifier, t), t.addressMap.find(notifier, t).id].postln;
 				t.addressMap.find(notifier, t).notify();
 			});
 			function.isFactory = true;
 		};
 	}
 
+	/**
+	 * Sets our function to call a method on a target.
+	 */
+	buildMethodFunction {
+		function = {
+			arg t;
+
+		};
+	}
+
+	buildNotifierFunction {
+
+	}
+
 	configure {
-		// [\configging, this.id, config, this.config.class].postln;
-		// if (config.includesKey(\notifier)) {
-		// 	\sadf;
-		// };
+		if (config.isNil.not) {
+
+		};
 	}
 }

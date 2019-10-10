@@ -34,7 +34,6 @@ DhObjectMap {
 		// var newaddress;
 		// var i;
 		// while ({ (i = addressArray.indexOf('..')).isNil.not }) {
-		// 	i.postln;
 		// 	addressArray.removeAt(i);
 		// 	addressArray.removeAt(i - 1);
 		// };

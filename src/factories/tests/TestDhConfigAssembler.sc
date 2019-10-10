@@ -3,8 +3,8 @@ TestDhConfigAssembler : TestDh {
 
 	setUp {
 		a = DhConfigAssembler();
-		a.compilePath = "/Users/danzinkevich/Library/Application Support/SuperCollider/hooks/core/compiled/";
-		a.sourcePath = "/Users/danzinkevich/Library/Application Support/SuperCollider/hooks/core/src/";
+		a.compilePath = "/Users/danzinkevich/Library/Application Support/SuperCollider/hookConfigs/core/compiled/";
+		a.sourcePath = "/Users/danzinkevich/Library/Application Support/SuperCollider/hookConfigs/core/src/";
 	}
 
 	tearDown {

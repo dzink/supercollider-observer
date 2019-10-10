@@ -2,7 +2,6 @@ DhObject {
 	var < config;
 	var <> buildConfig;
 	var owner;
-	// var id;
 	var < tree;
 	var root;
 	var < methods;
@@ -56,7 +55,6 @@ DhObject {
 			};
 		};
 		^ addressMap;
-		// Did I call address instead of addressMap anywhere?
 	}
 
 	setAddressMap {
@@ -196,8 +194,6 @@ DhObject {
 	prInheritService {
 		arg key;
 		var trunks;
-
-		// @TODO this should look up the tree as well.
 
 		trunks = this.selectTrunkWhere({
 			arg trunk;

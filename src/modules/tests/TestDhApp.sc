@@ -24,7 +24,6 @@ TestDhApp : TestDhModule {
 
 		o.observe(n);
 		o.function = {
-			[\o1, o.id].postln;
 			animal = \dog;
 		};
 
@@ -36,7 +35,6 @@ TestDhApp : TestDhModule {
 
 		o2.observe(n2);
 		o2.function = {
-			[o2, o2.id].postln;
 			animal = \seal;
 		};
 		a.addTask(t2.id, t2);
