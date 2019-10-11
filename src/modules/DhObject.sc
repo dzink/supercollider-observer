@@ -9,6 +9,8 @@ DhObject {
 	var addressMap;
 	var < dic;
 	var <> weight;
+	var < tasks;
+
 
 	*new {
 		^ super.new().init();
@@ -16,6 +18,7 @@ DhObject {
 
 	init {
 		tree = DhTree(this);
+		tasks = DhAtom();
 		^ this;
 	}
 
@@ -116,6 +119,11 @@ DhObject {
 		arg select = nil, depth = inf;
 		var branches = tree.selectBranches(select, depth);
 		^ DhTree.asSelves(branches);
+	}
+
+	getAllBranches {
+		arg depth = inf;
+		^ this.selectBranches({true}, depth);
 	}
 
 	findBranchById {
@@ -241,6 +249,18 @@ DhObject {
 			arg branch;
 			branch.remap();
 		};
+		^ this;
+	}
+
+	notifiers {
+		^ this.getService(\notifiers);
+	}
+
+	addTask {
+		arg key, task;
+		tasks[key] = task;
+		task.setTrunk(this);
+		task.configure();
 		^ this;
 	}
 

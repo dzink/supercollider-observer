@@ -13,37 +13,58 @@ DhTask : DhObject {
 	}
 
 	run {
-		this.buildFunction;
-		^ function.func.value(this);
+		^ this.function.func.value(this);
 	}
 
-	buildFunction {
-		if (notifier.isNil.not) {
-			function = DhDependencyInjectionContainerObject.fromFunction({
-				arg t;
-				t.addressMap.find(notifier, t).notify();
-			});
-			function.isFactory = true;
-		};
+	function {
+		^ function ?? {};
+	}
+
+	assignFunction {
+		arg otherFunction = {};
+		function = DhDependencyInjectionContainerObject.fromFunction(otherFunction);
+		^ this;
 	}
 
 	/**
 	 * Sets our function to call a method on a target.
 	 */
-	buildMethodFunction {
-		function = {
+	assignMethodFunction {
+		arg targetId = "", method = '';
+		^ this.assignFunction({
 			arg t;
-
-		};
+			var target = t.addressMap.find(targetId, t);
+			if (target.isKindOf(DhObject)) {
+				target.perform(method);
+			} {
+				("Target is not a kind of target, id: " ++ targetId).error;
+			};
+		});
 	}
 
-	buildNotifierFunction {
-
+	assignNotifierFunction {
+		arg notifierId = "", method = \notify, message = nil;
+		^ this.assignFunction({
+			arg t;
+			var notifier = t.addressMap.find(notifierId, t);
+			if (notifier.isKindOf(DhNotifier)) {
+				notifier.perform(method.asSymbol, message);
+			} {
+				("Notifier is not a kind of notifier, id: " ++ notifierId).error;
+			};
+		});
 	}
 
 	configure {
 		if (config.isNil.not) {
-
+			switch (config[\type].asSymbol,
+				\method, {
+					this.assignNotifierFunction(config[\target], config[\method].asSymbol);
+				},
+				\notifier, {
+					this.assignNotifierFunction(config[\notifierId], config[\notifierMethod], config[\message]);
+				}
+			);
 		};
 	}
 }

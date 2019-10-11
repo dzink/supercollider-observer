@@ -1,5 +1,4 @@
 DhApp : DhModule {
-	var < tasks;
 
 	*new{
 		^ super.new.init();
@@ -7,16 +6,12 @@ DhApp : DhModule {
 
 	init {
 		super.init;
-		tasks = DhAtom();
 		^ this;
 	}
 
-	addTask {
-		arg key, task;
-		tasks[key] = task;
-		task.setTrunk(this);
-		task.configure();
-		^ this;
+	run {
+		this.collectTasks();
+		this.runTasks();
 	}
 
 	runTasks {
@@ -25,4 +20,20 @@ DhApp : DhModule {
 			task.run;
 		};
 	}
+
+	configure {
+		arg config;
+		// var taskConfigs = this.collectTaskConfigs();
+
+	}
+
+	collectTasks {
+		var branches = this.getAllBranches();
+		branches.do {
+			arg branch;
+			tasks.putAll(branch.tasks);
+		};
+		^ this;
+	}
+
 }
