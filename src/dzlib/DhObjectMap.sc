@@ -15,29 +15,51 @@ DhObjectMap {
 	find {
 		arg address, startAt = nil;
 		var object;
-		var addressString = address.asString;
-		if (addressString.beginsWith("./")) {
-			var firstKeys, lastKeys;
-			addressString = addressString.copyRange(2, addressString.size);
-			address = startAt.getAddress().asString +/+ addressString;
-		};
-		object = addresses[address.asSymbol];
+		address = this.standardizeAddress(address, startAt);
+		object = addresses[address];
 		if (object.isNil.not) {
 			^ object;
 		};
 		^ nil;
 	}
 
-	traceParents {
-		// arg address;
-		// var addressArray = address.split($/).collect({ arg d; d.asSymbol}).asList;
-		// var newaddress;
-		// var i;
-		// while ({ (i = addressArray.indexOf('..')).isNil.not }) {
-		// 	addressArray.removeAt(i);
-		// 	addressArray.removeAt(i - 1);
-		// };
-		// newAddress = addressArray.join($/);
+	standardizeAddress {
+		arg address, startAt;
+		var addressString = address.asString;
+
+		if (addressString.contains("..")) {
+			if (addressString.beginsWith("./")) {
+				addressString = addressString.copyRange(1, addressString.size);
+			};
+			addressString = startAt.getAddress().asString +/+ addressString;
+			addressString = this.standardizeParents(addressString);
+		};
+		if (addressString.beginsWith("./")) {
+			addressString = addressString.copyRange(2, addressString.size);
+			addressString = startAt.getAddress().asString +/+ addressString;
+		};
+		if (addressString.beginsWith("/")) {
+			addressString = startAt.getRoot().getAddress().asString +/+ addressString;
+		};
+		^ this.trimAddress(addressString).asSymbol;
+	}
+
+	trimAddress {
+		arg address;
+		^ address.asString.split("/").reject({arg a; a.size == 0}).join("/");
+	}
+
+	standardizeParents {
+		arg address;
+		var addressArray = address.split($/).collect({ arg d; d.asSymbol}).asList;
+		var newAddress;
+		var i;
+		while ({ (i = addressArray.indexOf('..')).isNil.not }) {
+			addressArray.removeAt(i);
+			addressArray.removeAt(i - 1);
+		};
+		newAddress = addressArray.join($/);
+		^ newAddress;
 		// if (newAddress.)
 	}
 
