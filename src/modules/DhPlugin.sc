@@ -20,7 +20,8 @@ DhPlugin : DhObject {
 
 	addService {
 		arg key, service, memberConfig;
-		var serviceDic = {
+		var serviceDic;
+		serviceDic = {
 			service.serviceInit(service);
 			service;
 		};
@@ -32,14 +33,15 @@ DhPlugin : DhObject {
 		// Run object configuration
 
 		services.putFunction(key, serviceDic);
-		this.addBranches(service);
-
+		// this.addBranches(service);
+		service.setTrunk(this);
+		// [\servvv, this, service, key, service.getRoot].postln;
 		// Cache service is special, as it needs to be referenced directly to clear
 		// the cache's service location list.
 		if (key == \cache) {
 			cache = service;
 		};
-		cache.clear('service.*');
+		// cache.clear('service.*');
 		^ this;
 	}
 
@@ -56,13 +58,23 @@ DhPlugin : DhObject {
 
 	addNotifier {
 		arg key, notifier, memberConfig;
-		var notifierDic = {
+		var notifierDic, notifiers;
+		if (memberConfig.isNil.not and: { memberConfig[\id].asString.beginsWith("core") }) {
+			notifier.setId(key);
+		};
+
+		notifierDic = {
 			// notifier.run(\notifierInit);
 			notifier;
 		};
-		notifier.setTrunk(this.getService('notifiers'));
+		notifiers = this.getRoot.getService('notifiers');
+		notifiers.addNotifier(key, notifier);
+		// [\aaa, this.addressMap.list].postln;
+		// [\nnnn, this, this.getRoot, this == this.root].postln;
+		notifier.setTrunk(notifiers);
 		// this.addBranches(notifier);
-		this.notifiers[key] = notifier;
+		this.getService('notifiers').notifiers[key] = notifier;
+		// [\nnononon, key, notifier.getAddress].postln;
 		^ this;
 	}
 

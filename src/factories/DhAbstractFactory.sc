@@ -39,14 +39,16 @@ DhAbstractFactory {
 	}
 
 	buildFromConfig {
-		arg config;
+		arg config, parent = nil;
 		var member;
 
 		member = this.buildClass(config);
 		member.setDic(dic).setAddressMap(addressMap);
 		this.buildBasics(member, config);
-		this.buildMemberTypes(member, config);
+		this.placeMember(member, config, parent);
 		builtMembers = builtMembers.add(member);
+		member.setConfig(config);
+		this.buildBranchTypes(member, config);
 		^ member;
 	}
 
@@ -54,6 +56,22 @@ DhAbstractFactory {
 		arg config;
 		var class = config["class"] ?? DhAtom;
 		 ^ class.asSymbol.asClass.new();//perform("*new".asSymbol);
+	}
+
+	placeMember {
+		arg member, config, parent = nil;
+
+		if (config[\id].asString.beginsWith("core.")) {
+			member.setId(config[\key]);
+		} {
+			member.setId(config[\id]);
+		};
+		if (parent.isNil.not) {
+			var method = config[\addMethod].asSymbol;
+			// member.setTrunk(parent);
+			parent.perform(method, config[\key], member, config);
+		};
+		^ this;
 	}
 
 	/**
@@ -67,7 +85,7 @@ DhAbstractFactory {
 			propertyList.weightedKeysValuesDo {
 				arg key, propertyConfig;
 				var sourceKey = propertyConfig[\sourceKey];
-				var method = propertyConfig[\targetMethod];
+				var method = propertyConfig[\addMethod];
 				if (config.includesKey(sourceKey)) {
 					var data = config[sourceKey];
 					m.perform(method.asSymbol, data);
@@ -85,13 +103,13 @@ DhAbstractFactory {
 	 * Goes through the list of member types.
 	 * Get lists of member types, then pass configs to build member groups.
 	 */
-	buildMemberTypes {
+	buildBranchTypes {
 		arg m, config;
 		var memberPropertyLists = this.getMemberPropertyLists(config);
 		if (memberPropertyLists.isNil.not) {
 			memberPropertyLists.weightedKeysValuesDo {
 				arg key, buildConfig;
-				this.buildMemberGroup(m, config, buildConfig);
+				this.buildBranchGroup(m, config, buildConfig);
 			};
 		};
 	}
@@ -102,11 +120,10 @@ DhAbstractFactory {
 	 * keys because sometimes simple members (such as notifiers) simply need to
 	 * have their key defined.
 	 */
-	buildMemberGroup {
+	buildBranchGroup {
 		arg m, config, buildConfig;
-		var member;
-		var memberList = config[buildConfig[\key]];
-		var method = buildConfig[\targetMethod].asSymbol;
+		var memberList = config[buildConfig[\sourceKey]];
+		var method = buildConfig[\addMethod].asSymbol;
 		var baseConfig = configs[buildConfig[\base_config]];
 
 		if (memberList.isNil.not) {
@@ -120,8 +137,7 @@ DhAbstractFactory {
 				};
 
 				memberConfig.default(DhConfig[\key -> key]);
-				member = this.buildMemberGroupMember(memberConfig, baseConfig, buildConfig);
-				m.perform(method, key, member, memberConfig);
+				member = this.buildBranchGroupMember(memberConfig, baseConfig, buildConfig, m);
 			};
 		};
 	}
@@ -129,12 +145,13 @@ DhAbstractFactory {
 	/**
 	 * Build each member. Add a base config for defaults for each.
 	 */
-	buildMemberGroupMember {
-		arg memberConfig, baseConfig, buildConfig;
+	buildBranchGroupMember {
+		arg memberConfig, baseConfig, buildConfig, parent;
 		var member;
 
 		memberConfig.default(baseConfig);
-		member = this.buildFromConfig(memberConfig);
+		memberConfig.default(buildConfig);
+		member = this.buildFromConfig(memberConfig, parent);
 		member.setConfig(memberConfig);
 		member.buildConfig_(buildConfig);
 		^ member;

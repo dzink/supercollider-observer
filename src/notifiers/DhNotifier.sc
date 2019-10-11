@@ -16,6 +16,7 @@ DhNotifier : DhObject {
 
 	init {
 		super.init();
+		observers = SortedList[];
 		cache = DhCache();
 		^ this;
 	}
@@ -57,11 +58,13 @@ DhNotifier : DhObject {
 		^ results;
 	}
 
+	notifyResolve {
+		arg message;
+		^ this.notifyAsync(message).resolve();
+	}
+
 	addObserver {
 		arg observer;
-		if (observers.isKindOf(List).not) {
-			observers = SortedList[];
-		};
 		observers.add(observer);
 		^ this;
 	}
