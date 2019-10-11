@@ -33,7 +33,7 @@ DhTask : DhObject {
 		arg targetId = "", method = '';
 		^ this.assignFunction({
 			arg t;
-			var target = t.addressMap.find(targetId, t);
+			var target = t.find(targetId, t);
 			if (target.isKindOf(DhObject)) {
 				target.perform(method);
 			} {
@@ -46,7 +46,7 @@ DhTask : DhObject {
 		arg notifierId = "", method = \notify, message = nil;
 		^ this.assignFunction({
 			arg t;
-			var notifier = t.addressMap.find(notifierId, t);
+			var notifier = t.find(notifierId, t);
 			if (notifier.isKindOf(DhNotifier)) {
 				// [\obscount, notifier.observers.size].postln;
 				notifier.perform(method.asSymbol, message);

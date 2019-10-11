@@ -41,12 +41,16 @@ DhObjectMap {
 		if (addressString.beginsWith("/")) {
 			addressString = startAt.getRoot().getAddress().asString +/+ addressString;
 		};
+		if (addressString.compare(".") == 0) {
+			addressString = startAt.getAddress().asString;
+		};
+
 		^ this.trimAddress(addressString).asSymbol;
 	}
 
 	trimAddress {
 		arg address;
-		^ address.asString.split("/").reject({arg a; a.size == 0}).join("/");
+		^ address.asString.split($/).reject({arg a; a.size == 0}).join("/");
 	}
 
 	standardizeParents {

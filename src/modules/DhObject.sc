@@ -66,6 +66,11 @@ DhObject {
 		^ this;
 	}
 
+	find {
+		arg id;
+		^ this.addressMap.find(id, this);
+	}
+
 	setDic {
 		arg anotherDic;
 		dic = anotherDic;
@@ -86,6 +91,9 @@ DhObject {
 		tree.setTrunk(trunk);
 		addressMap = trunk.addressMap();
 		this.addressMap.register(this);
+		if (trunk.isRoot) {
+			this.addressMap.register(trunk);
+		};
 		^ this;
 	}
 
@@ -100,6 +108,9 @@ DhObject {
 			arg object;
 			object.setAddressMap(this.addressMap());
 			this.addressMap.register(object);
+		};
+		if (this.isRoot) {
+			this.addressMap.register(this);
 		};
 		^ this;
 	}
@@ -165,6 +176,10 @@ DhObject {
 		};
 		trunks = tree.selectTrunks(newselect, depth);
 		^ DhTree.asSelves(trunks);
+	}
+
+	isRoot {
+		^ this == this.getRoot;
 	}
 
 	getRoot {
