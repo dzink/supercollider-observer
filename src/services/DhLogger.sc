@@ -6,7 +6,8 @@ DhLogger : DhService {
 	log {
 		arg message, level = 1;
 		if (level <= logVerbosity) {
-			("Log" ++ logVerbosity ++ ": " ++ message).postln;
+			("Log " ++ logVerbosity ++ ": " ++ message).postln;
+
 		};
 		^ this;
 	}

@@ -220,6 +220,12 @@ DhObject {
 		^ this;
 	}
 
+	logcs {
+		arg object, level = 10;
+		this.getService(\logger).log(object.asCompileString, level);
+		^ this;
+	}
+
 	warn {
 		arg message;
 		this.getService(\logger).warn(message);
