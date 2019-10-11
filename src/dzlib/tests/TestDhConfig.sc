@@ -83,22 +83,22 @@ TestDhConfig : TestDh {
 		var yaml = "'duck':
   'duck':
     'goose':
-    - 1
-    - true
-    - FALSE
-    - nil
-    - null
+      'number': 1
+      'true': true
+      'false': FALSE
+      'nil': nil
+      'null': null
     'moose':
       'what?'";
 		c = DhConfig.fromYaml(yaml);
 		this.assertEquals(c["duck.duck.moose"], "what?", "Config yaml import imports strings (easy).");
-		this.assert(["duck.duck.goose"].isKindOf(Array), "Config yaml import works with arrays.");
-		this.assertEquals(c["duck.duck.goose.0"].class, Float, "Config yaml import turns numberlike strings into Floats.");
-		this.assertFloatEquals(c["duck.duck.goose.0"], 1, "Config yaml import imports floats.");
-		this.assertEquals(c["duck.duck.goose.1"], true, "Config yaml import imports true.");
-		this.assertEquals(c["duck.duck.goose.2"], false, "Config yaml import imports false.");
-		this.assertEquals(c["duck.duck.goose.3"], nil, "Config yaml import imports nil.");
-		this.assertEquals(c["duck.duck.goose.4"], nil, "Config yaml import imports NULL.");
+		// this.assert(["duck.duck.goose"].isKindOf(Array), "Config yaml import works with arrays.");
+		this.assertEquals(c["duck.duck.goose.number"].class, Float, "Config yaml import turns numberlike strings into Floats.");
+		this.assertFloatEquals(c["duck.duck.goose.number"], 1, "Config yaml import imports floats.");
+		this.assertEquals(c["duck.duck.goose.true"], true, "Config yaml import imports true.");
+		this.assertEquals(c["duck.duck.goose.false"], false, "Config yaml import imports false.");
+		this.assertEquals(c["duck.duck.goose.nil"], nil, "Config yaml import imports nil.");
+		this.assertEquals(c["duck.duck.goose.null"], nil, "Config yaml import imports NULL.");
 	}
 
 	test_nil {

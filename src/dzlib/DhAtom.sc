@@ -31,7 +31,7 @@ DhAtom : IdentityDictionary {
 		var keys = this.keys;
 		^ keys.asArray.sortMap {
 			arg key;
-			var weight = this.determineWeight(this[key], property);
+			var weight = this.determineWeight(this[key], property).asFloat;
 			weight;
 		};
 	}
@@ -39,10 +39,10 @@ DhAtom : IdentityDictionary {
 	determineWeight {
 		arg object, property = \weight;
 		if (object.isKindOf(Dictionary)) {
-			^ (object[property] ?? 0);
+			^ (object[property] ?? 0).asFloat;
 		} {
 			if (object.respondsTo(property.asSymbol)) {
-				^ (object.perform(property.asSymbol) ?? 0);
+				^ (object.perform(property.asSymbol) ?? 0).asFloat;
 			} {
 			^	0;
 			};

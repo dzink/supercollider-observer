@@ -70,7 +70,6 @@ DhPlugin : DhObject {
 		notifiers = this.getRoot.getService('notifiers');
 		notifiers.addNotifier(key, notifier);
 		// [\aaa, this.addressMap.list].postln;
-		// [\nnnn, this, this.getRoot, this == this.root].postln;
 		notifier.setTrunk(notifiers);
 		// this.addBranches(notifier);
 		this.getService('notifiers').notifiers[key] = notifier;

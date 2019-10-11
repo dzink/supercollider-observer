@@ -8,7 +8,7 @@ DhObject {
 	var address;
 	var addressMap;
 	var < dic;
-	var <> weight;
+	var <> weight = 0;
 	var < tasks;
 
 

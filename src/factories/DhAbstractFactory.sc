@@ -68,7 +68,6 @@ DhAbstractFactory {
 		};
 		if (parent.isNil.not) {
 			var method = config[\addMethod].asSymbol;
-			// member.setTrunk(parent);
 			parent.perform(method, config[\key], member, config);
 		};
 		^ this;

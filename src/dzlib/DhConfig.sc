@@ -57,7 +57,7 @@ DhConfig : DhDependencyInjectionContainer {
 
 	*prConvertStringType {
 		arg value;
-		if ("^-*[\\d\\.]*$".matchRegexp(value)) {
+		if ("^\\s*-*\\d*\\.?\\d+\\s*$".matchRegexp(value)) {
 			^ value.asFloat;
 		};
 		if ("true".compare(value, true) == 0) {
