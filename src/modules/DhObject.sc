@@ -266,7 +266,6 @@ DhObject {
 		arg key, task;
 		tasks[key] = task;
 		task.setTrunk(this);
-		task.configure();
 		^ this;
 	}
 

@@ -46,6 +46,33 @@ DhObserver : DhObject {
 		^ this;
 	}
 
+	configure {
+		arg config;
+		[\ccccc, config].postln;
+		if (config.isNil.not) {
+			var self = this;
+			var method = config[\method];
+			var targetId = config[\targetId];
+			var notifierId = config[\notifierId];
+			var target = self.addressMap.find(targetId, self);
+			[\ttt, target, targetId].postln;
+			if (method.isNil.not) {
+				function = {
+					arg message, scheduler;
+					// var target = self.addressMap.find(targetId, self);
+					target.perform(method.asSymbol, target, message);
+				};
+			};
+			if (notifierId.isNil.not) {
+				var notifier = self.addressMap.find(notifierId, self);
+				this.addressMap.list.postcs;
+				[\noo, notifier, notifierId].postln;
+				this.observe(notifier);
+			};
+
+		};
+	}
+
 	< {
 		arg comp;
 		if (comp.isKindOf(DhObserver)) {

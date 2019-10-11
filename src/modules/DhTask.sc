@@ -48,23 +48,29 @@ DhTask : DhObject {
 			arg t;
 			var notifier = t.addressMap.find(notifierId, t);
 			if (notifier.isKindOf(DhNotifier)) {
+				// [\obscount, notifier.observers.size].postln;
 				notifier.perform(method.asSymbol, message);
 			} {
-				("Notifier is not a kind of notifier, id: " ++ notifierId).error;
+				(this.getAddress ++ ": Notifier is not a kind of notifier, id: " ++ notifierId).error;
 			};
 		});
 	}
 
 	configure {
+		arg config;
 		if (config.isNil.not) {
-			switch (config[\type].asSymbol,
+			switch (config[\taskType].asSymbol,
 				\method, {
-					this.assignNotifierFunction(config[\target], config[\method].asSymbol);
+					this.assignMethodFunction(config[\target], config[\method].asSymbol);
+					[\methh, this.getAddress].postln;
 				},
 				\notifier, {
 					this.assignNotifierFunction(config[\notifierId], config[\notifierMethod], config[\message]);
+					[\nottii, this.getAddress].postln;
+					// [config].postcs;
 				}
 			);
+			weight = config[\weight] ?? 0;
 		};
 	}
 }
