@@ -48,6 +48,21 @@ DhApp : DhModule {
 		^ this;
 	}
 
+	configureObservers {
+		this.configureBranches(DhObserver);
+		^ this;
+	}
+
+	configureServices {
+		this.configureBranches(DhService);
+		^ this;
+	}
+
+	configureModules {
+		this.configureBranches(DhModule);
+		^ this;
+	}
+
 	configure {
 		arg config;
 		// var taskConfigs = this.collectTaskConfigs();

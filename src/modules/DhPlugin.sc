@@ -22,7 +22,6 @@ DhPlugin : DhObject {
 		arg key, service, memberConfig;
 		var serviceDic;
 		serviceDic = {
-			service.serviceInit(service);
 			service;
 		};
 
@@ -117,7 +116,7 @@ DhPlugin : DhObject {
 			^ data.perform(method, *(args));
 		};
 		// @TODO there should be a better error here.
-		// (this.class.asString ++ " " ++ this.address ++ " does not respond to " ++ method).error;
+		(this.class.asString ++ " " ++ this.getAddress ++ " does not respond to " ++ method).error;
 	}
 
 	defaultDataStore {

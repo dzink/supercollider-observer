@@ -43,4 +43,9 @@ DhService : DhPlugin {
 		^ functions[key].value(module, this, *(args));
 	}
 
+	configure {
+		arg config;
+		config = this.useConfigMethod(config);
+	}
+
 }

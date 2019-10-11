@@ -48,25 +48,22 @@ DhObserver : DhObject {
 
 	configure {
 		arg config;
-		[\ccccc, config].postln;
 		if (config.isNil.not) {
 			var self = this;
 			var method = config[\method];
 			var targetId = config[\targetId];
 			var notifierId = config[\notifierId];
 			var target = self.find(targetId, self);
-			[\ttt, target, targetId].postln;
+
 			if (method.isNil.not) {
 				function = {
 					arg message, scheduler;
-					// var target = self.find(targetId, self);
-					target.perform(method.asSymbol, target, message);
+					[\observer, message].postln;
+					target.perform(method.asSymbol, message);
 				};
 			};
 			if (notifierId.isNil.not) {
 				var notifier = self.find(notifierId, self);
-				this.addressMap.list.postcs;
-				[\noo, notifier, notifierId].postln;
 				this.observe(notifier);
 			};
 

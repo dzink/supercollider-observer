@@ -48,7 +48,6 @@ DhTask : DhObject {
 			arg t;
 			var notifier = t.find(notifierId, t);
 			if (notifier.isKindOf(DhNotifier)) {
-				// [\obscount, notifier.observers.size].postln;
 				notifier.perform(method.asSymbol, message);
 			} {
 				(this.getAddress ++ ": Notifier is not a kind of notifier, id: " ++ notifierId).error;
@@ -62,12 +61,9 @@ DhTask : DhObject {
 			switch (config[\taskType].asSymbol,
 				\method, {
 					this.assignMethodFunction(config[\target], config[\method].asSymbol);
-					[\methh, this.getAddress].postln;
 				},
 				\notifier, {
 					this.assignNotifierFunction(config[\notifierId], config[\notifierMethod], config[\message]);
-					[\nottii, this.getAddress].postln;
-					// [config].postcs;
 				}
 			);
 			weight = config[\weight] ?? 0;

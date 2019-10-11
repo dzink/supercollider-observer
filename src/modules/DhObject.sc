@@ -284,4 +284,14 @@ DhObject {
 		^ this;
 	}
 
+	useConfigMethod {
+		arg config;
+		if (config.isNil.not) {
+			if (config[\configMethod].isNil.not) {
+				this.perform(config[\configMethod].asSymbol, config);
+			};
+		};
+		^ config;
+	}
+
 }
