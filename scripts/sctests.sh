@@ -19,8 +19,8 @@ class=UnitTest
 tempfile=/tmp/sc-tests-watch.sc
 nodemon_command="nodemon"
 watch_dirs=""
-# sclang_command="sclang -D"
-sclang_command="cat"
+sclang_command="sclang -D"
+# sclang_command="cat"
 pass_verbosity="default"
 while [ "$1" != "" ]; do
   case $1 in
@@ -66,7 +66,7 @@ case ${pass_verbosity} in
 esac
 
 # Create the temp sc file that will run the tests.
-echo "({${class}${pass_method}.runAll(); 1.wait; 1.exit}.fork)" > ${tempfile}
+echo "({${class}${pass_method}.runAll(); 1.wait; 0.exit}.fork)" > ${tempfile}
 echo "watch ${watch_exts}"
 # Generate the command and welcome message.
 if [ -z "${watch_dirs}" ]
